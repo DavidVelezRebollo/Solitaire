@@ -40,7 +40,7 @@ TextureImporter:
     second: Hearts_Q
   - first:
       213: -579249898599023583
-    second: Hearts_
+    second: Hearts_K
   - first:
       213: -4203433506095509898
     second: Diamonds_A
@@ -512,7 +512,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Hearts_
+      name: Hearts_K
       rect:
         serializedVersion: 2
         x: 791
@@ -1360,7 +1360,7 @@ TextureImporter:
         width: 42
         height: 60
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1381,7 +1381,7 @@ TextureImporter:
         width: 42
         height: 60
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

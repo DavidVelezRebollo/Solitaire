@@ -17,7 +17,7 @@ namespace DVR.Components {
         public Deck Deck;
         
         private void Start() {
-            Deck.InitializeDeck();
+            Deck.Initialize();
         }
     }
 }
