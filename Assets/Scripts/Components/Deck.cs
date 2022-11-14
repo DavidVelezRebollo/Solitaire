@@ -15,7 +15,7 @@ namespace DVR.Components {
         public Sprite[] SpadesSprites;
         public Sprite[] ClubsSprites;
         [Header("Card Columns")] 
-        public GameObject[] Columns;
+        public CardPile[] Columns;
 
         private readonly CardStack _deckCards = new CardStack();
         private const int _CARD_NUMBER = 52;
@@ -72,18 +72,26 @@ namespace DVR.Components {
 
             for (int i = 0; i < Columns.Length; i++) {
                 for (int j = 0; j < cardsNumber; j++) {
-                    CardComponent card = CardPrefab.GetComponent<CardComponent>();
+                    // VARIABLES
+                    CardComponent instantiateCard = CardPrefab.GetComponent<CardComponent>();   
+                    Card lastCard = _deckCards.GetCard();
                     Vector3 position = Columns[columnNumber].transform.position + new Vector3(0, yOffset, 0);
                     Transform parent = Columns[columnNumber].transform;
 
-                    card.SetCard(_deckCards.GetCard());
-                    _deckCards.RemoveCard();
+                    // CREATION OF THE CARD
+                    instantiateCard.SetCard(lastCard);
+                    GameObject cardGo = instantiateCard.CreateCard(parent, position);
 
+                    // CARD INITIALIZATION
+                    CardComponent card = cardGo.GetComponent<CardComponent>();
+                    card.SetCard(lastCard);
+                    Columns[columnNumber].AddCard(lastCard, cardGo);
+                    
                     if (columnNumber != 0 && j + 1 != cardsNumber) {
                         card.Flip();
                     }
-
-                    card.CreateCard(parent, position);
+                    
+                    _deckCards.RemoveCard();
                     
                     yOffset -= 0.7f;
 
@@ -121,14 +129,18 @@ namespace DVR.Components {
                 return;
             }
             
-            CardComponent card = CardPrefab.GetComponent<CardComponent>();
+            CardComponent instantiateCard = CardPrefab.GetComponent<CardComponent>();
             Transform parent = StolenCards.transform;
             StolenCards.Cards.AddCard(_deckCards.GetCard());
             
+            instantiateCard.SetCard(_deckCards.GetCard());
+            GameObject cardGo = instantiateCard.CreateCard(parent, parent.position);
+            StolenCards.AddCardGo(cardGo);
+            
+            CardComponent card = cardGo.GetComponent<CardComponent>();
             card.SetCard(_deckCards.GetCard());
             _deckCards.RemoveCard();
             
-            StolenCards.AddCardGo(card.CreateCard(parent, parent.position));
         }
 
         private void OnMouseDown() {

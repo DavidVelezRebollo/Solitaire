@@ -87,5 +87,14 @@ namespace DVR.Classes {
 
         #endregion
 
+        #region Methods
+
+        public bool CanPlace(Card card) {
+            return _value == card.GetCardValue() - 1
+                && _color != card.GetCardColor();
+        }
+
+        #endregion
+
     }
 }
