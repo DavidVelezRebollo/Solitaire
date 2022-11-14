@@ -1,6 +1,6 @@
 using UnityEngine;
 using DVR.Classes;
-using UnityEngine.Assertions;
+using JetBrains.Annotations;
 
 namespace DVR.Components {
     public class CardComponent : MonoBehaviour {
@@ -21,6 +21,14 @@ namespace DVR.Components {
 
         public Card GetCard() {
             return _card;
+        }
+        
+        public GameObject CreateCard(Transform parent, Vector3 position) {
+            GameObject cardGo = Instantiate(gameObject, position, Quaternion.identity);
+            cardGo.transform.parent = parent;
+            cardGo.name = _card.ToString();
+
+            return cardGo;
         }
     }
 }

@@ -1,5 +1,4 @@
-namespace DVR.Classes {
-    [System.Serializable]
+namespace DVR.Shared {
     public enum CardColor {
         Red,
         Black

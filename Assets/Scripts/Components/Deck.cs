@@ -1,12 +1,15 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using DVR.Classes;
+using DVR.Shared;
+using Random = UnityEngine.Random;
 
 namespace DVR.Components {
     public class Deck : MonoBehaviour {
         [Header("Unity Fields")]
         public GameObject CardPrefab;
+        public StolenCards StolenCards;
         [Header("Cards Sprites")]
         public Sprite[] DiamondSprites;
         public Sprite[] HeartSprites;
@@ -14,10 +17,23 @@ namespace DVR.Components {
         public Sprite[] ClubsSprites;
         [Header("Card Columns")] 
         public GameObject[] Columns;
-        
-        private readonly List<Card> _deckCards = new List<Card>();
 
+        private readonly CardStack _deckCards = new CardStack();
         private const int _CARD_NUMBER = 52;
+        private SpriteRenderer _spriteRenderer;
+
+        private void Start() {
+            _spriteRenderer = GetComponent<SpriteRenderer>();
+        }
+
+        private void Update() {
+            _spriteRenderer.color = !_deckCards.HasCards() ? 
+                new Color(0f, 0f, 0f, 0.79f) : new Color(1f, 1f, 1f, 1f);
+
+            if (!Input.GetMouseButtonDown(0)) return;
+
+            HandleMouseClick();
+        }
 
         public void Initialize() {
             InitializeCards();
@@ -33,9 +49,9 @@ namespace DVR.Components {
                     type++;
 
                 Sprite sprite = SelectCardSprite(type, i % 13);
-                Card card = new Card(type, i % 13 + 1, sprite, false);
+                Card card = new Card(type, i % 13 + 1, sprite, true);
                 
-                _deckCards.Add(card);
+                _deckCards.AddCard(card);
             }
         }
 
@@ -49,9 +65,9 @@ namespace DVR.Components {
                     a = Random.Range(0, _CARD_NUMBER);
                     b = Random.Range(0, _CARD_NUMBER);
                 } while (a == b);
-                
-                
-                (_deckCards[a], _deckCards[b]) = (_deckCards[b], _deckCards[a]);
+
+
+                _deckCards.ChangeCards(a, b);
             }
         }
 
@@ -61,24 +77,22 @@ namespace DVR.Components {
 
             for (int i = 0; i < Columns.Length; i++) {
                 for (int j = 0; j < cardsNumber; j++) {
-                    int lastCard = _deckCards.Count - 1;
                     CardComponent card = CardPrefab.GetComponent<CardComponent>();
+                    Vector3 position = Columns[columnNumber].transform.position + new Vector3(0, yOffset, 0);
+                    Transform parent = Columns[columnNumber].transform;
 
-                    card.SetCard(_deckCards[lastCard]);
-                    _deckCards.Remove(_deckCards[lastCard]);
+                    card.SetCard(_deckCards.GetCard());
+                    _deckCards.RemoveCard();
 
-                    if (columnNumber == 0 || j + 1 == cardsNumber) {
+                    if (columnNumber != 0 && j + 1 != cardsNumber) {
                         card.Flip();
                     }
 
-                    GameObject cardGo = Instantiate(CardPrefab,
-                        Columns[columnNumber].transform.position + new Vector3(0, yOffset, 0), 
-                        Quaternion.identity);
-                    cardGo.transform.parent = Columns[columnNumber].transform;
-
+                    card.CreateCard(parent, position);
+                    
                     yOffset -= 0.7f;
 
-                    yield return new WaitForSeconds(0.2f);
+                    yield return new WaitForSeconds(0.05f);
                 }
 
                 columnNumber++;
@@ -97,6 +111,29 @@ namespace DVR.Components {
             };
 
             return sprite;
+        }
+
+        private void HandleMouseClick() {
+            if (!_deckCards.HasCards()) {
+                int cardsStolen = StolenCards.Cards.CardCount();
+                
+                for (int i = 0; i < cardsStolen; i++) {
+                    _deckCards.AddCard(StolenCards.Cards.GetCard());
+                    StolenCards.RemoveCardGo();
+                    StolenCards.Cards.RemoveCard();
+                }
+                
+                return;
+            }
+            
+            CardComponent card = CardPrefab.GetComponent<CardComponent>();
+            Transform parent = StolenCards.transform;
+            StolenCards.Cards.AddCard(_deckCards.GetCard());
+            
+            card.SetCard(_deckCards.GetCard());
+            _deckCards.RemoveCard();
+            
+            StolenCards.AddCardGo(card.CreateCard(parent, parent.position));
         }
     }
 }

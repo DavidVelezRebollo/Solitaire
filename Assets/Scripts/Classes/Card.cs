@@ -1,4 +1,5 @@
 using DVR.Interfaces;
+using DVR.Shared;
 using UnityEngine;
 
 namespace DVR.Classes {
