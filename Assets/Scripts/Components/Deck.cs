@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using DVR.Classes;
@@ -29,10 +28,6 @@ namespace DVR.Components {
         private void Update() {
             _spriteRenderer.color = !_deckCards.HasCards() ? 
                 new Color(0f, 0f, 0f, 0.79f) : new Color(1f, 1f, 1f, 1f);
-
-            if (!Input.GetMouseButtonDown(0)) return;
-
-            HandleMouseClick();
         }
 
         public void Initialize() {
@@ -134,6 +129,10 @@ namespace DVR.Components {
             _deckCards.RemoveCard();
             
             StolenCards.AddCardGo(card.CreateCard(parent, parent.position));
+        }
+
+        private void OnMouseDown() {
+            HandleMouseClick();
         }
     }
 }

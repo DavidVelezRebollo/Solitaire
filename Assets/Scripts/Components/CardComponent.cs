@@ -1,6 +1,5 @@
 using UnityEngine;
 using DVR.Classes;
-using JetBrains.Annotations;
 
 namespace DVR.Components {
     public class CardComponent : MonoBehaviour {
@@ -29,6 +28,10 @@ namespace DVR.Components {
             cardGo.name = _card.ToString();
 
             return cardGo;
+        }
+
+        private void OnMouseDown() {
+            Debug.Log("Card " + _card + " clicked");
         }
     }
 }
