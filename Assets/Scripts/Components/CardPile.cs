@@ -1,36 +1,29 @@
-using System.Collections.Generic;
 using DVR.Classes;
 using UnityEngine;
 
 namespace DVR.Components
 {
     public class CardPile : MonoBehaviour {
-        protected readonly CardStack CardStack  = new CardStack();
-        private readonly List<GameObject> _cardGameObjects = new List<GameObject>();
+        public readonly CardStack CardStack  = new CardStack();
 
+        /// <summary>
+        ///  Adds a card to the last position of the pile
+        /// </summary>
+        /// <param name="card">Card proprieties</param>
+        /// <param name="cardGameObject">Game object where the card is instantiated</param>
         public void AddCard(Card card, GameObject cardGameObject) {
-            CardStack.AddCard(card);
-            _cardGameObjects.Add(cardGameObject);
+            CardStack.AddCard(card, cardGameObject);
             card.SetCardStack(CardStack);
 
             cardGameObject.transform.parent = transform;
         }
 
-        public void RemoveCard() {
-            CardStack.RemoveCard(); 
-            _cardGameObjects.RemoveAt(_cardGameObjects.Count - 1);
-        }
-
-        public Card GetLastCard() {
-            return CardStack.GetCard();
-        }
-
-        public GameObject GetLastCardGo() {
-            return _cardGameObjects[_cardGameObjects.Count - 1];
-        }
-
-        public CardStack GetCardStack() {
-            return CardStack;
+        /// <summary>
+        /// Gets the last card component of the stack
+        /// </summary>
+        /// <returns>The last card component of the stack</returns>
+        public CardComponent GetCardComponent(int index) {
+            return CardStack.GetCardGameObject(index).GetComponent<CardComponent>();
         }
     }
 }

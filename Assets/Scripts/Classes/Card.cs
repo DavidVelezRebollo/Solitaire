@@ -41,7 +41,7 @@ namespace DVR.Classes {
             return _type;
         }
 
-        public CardColor GetCardColor() {
+        private CardColor GetCardColor() {
             return _color;
         }
 

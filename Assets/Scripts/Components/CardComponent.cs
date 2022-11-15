@@ -4,13 +4,16 @@ using UnityEngine.Assertions;
 
 namespace DVR.Components {
     public class CardComponent : MonoBehaviour {
-        public SpriteRenderer SpriteRenderer;
-        public BoxCollider2D Collider;
-        public Sprite ReverseCard;
+        [SerializeField] private SpriteRenderer SpriteRenderer;
+        [SerializeField] private BoxCollider2D Collider;
+        [SerializeField] private Sprite ReverseCard;
         
         private Card _card;
+        private CardPile _currentPile;
         private Vector3 _cardPosition;
         private bool _moving;
+
+        private const float _CARD_SPEED = 0.3f;
 
         private void Update() {
             if (transform.position == _cardPosition) _moving = false;
@@ -18,7 +21,7 @@ namespace DVR.Components {
                 Collider.enabled = false;
                 
                 if(_moving)
-                    transform.position = Vector3.MoveTowards(transform.position, _cardPosition, 0.5f);
+                    transform.position = Vector3.MoveTowards(transform.position, _cardPosition, _CARD_SPEED);
                 
                 return;
             }
@@ -36,6 +39,10 @@ namespace DVR.Components {
             SpriteRenderer.sprite = _card.IsVisible() ?  card.GetCardSprite() : ReverseCard;
         }
 
+        public void SetPile(CardPile newPile) {
+            _currentPile = newPile;
+        }
+
         public Card GetCard() {
             return _card;
         }
@@ -46,6 +53,12 @@ namespace DVR.Components {
             cardGo.name = _card.ToString();
             
             return cardGo;
+        }
+
+        private void ChangePile(CardPile newPile) {
+            newPile.AddCard(_currentPile.CardStack.GetCard(), _currentPile.CardStack.GetCardGameObject());
+            _currentPile.CardStack.RemoveCard();
+            _currentPile = newPile;
         }
 
         private void OnMouseOver() {
@@ -80,16 +93,21 @@ namespace DVR.Components {
             bool found = false;
 
             while (i < piles.Length && !found) {
-                Card lastCard = piles[i].GetLastCard();
-                GameObject lastCardGo = piles[i].GetLastCardGo();
+                Card lastCard = piles[i].CardStack.GetCard();
+                GameObject lastCardGo = piles[i].CardStack.GetCardGameObject();
 
                 if (_card.CanPlace(lastCard)) {
                     _cardPosition = lastCardGo.transform.position - new Vector3(0, 0.7f, 0);
-                    piles[i].RemoveCard();
                     
-                    if (piles[i].GetCardStack().HasCards()) {
+                    if (_currentPile.CardStack.HasCards()) {
+                        int previousCard = _currentPile.CardStack.CardCount() - 2;
                         
+                        if(!_currentPile.CardStack.GetCard(previousCard).IsVisible())
+                            _currentPile.GetCardComponent(previousCard).Flip();
                     }
+                    
+                    ChangePile(piles[i]);
+                    
                     
                     _moving = true;
                     found = true;

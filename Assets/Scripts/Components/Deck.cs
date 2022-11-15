@@ -47,7 +47,7 @@ namespace DVR.Components {
                 Sprite sprite = SelectCardSprite(type, i % 13);
                 Card card = new Card(type, i % 13 + 1, sprite, true);
                 
-                _deckCards.AddCard(card);
+                _deckCards.AddCard(card, null);
             }
         }
 
@@ -88,6 +88,7 @@ namespace DVR.Components {
                     // CARD INITIALIZATION
                     CardComponent card = cardGo.GetComponent<CardComponent>();
                     card.SetCard(lastCard);
+                    card.SetPile(piles[pileNumber]);
 
                     // ADDING THE CARD
                     piles[pileNumber].AddCard(card.GetCard(), cardGo);
@@ -124,9 +125,8 @@ namespace DVR.Components {
                 int cardsStolen = StolenCards.Cards.CardCount();
                 
                 for (int i = 0; i < cardsStolen; i++) {
-                    _deckCards.AddCard(StolenCards.Cards.GetCard());
-                    StolenCards.RemoveCardGo();
-                    StolenCards.Cards.RemoveCard();
+                    _deckCards.AddCard(StolenCards.Cards.GetCard(), null);
+                    StolenCards.RemoveCard();
                 }
                 
                 return;
@@ -134,13 +134,14 @@ namespace DVR.Components {
             
             CardComponent instantiateCard = CardPrefab.GetComponent<CardComponent>();
             Transform parent = StolenCards.transform;
-            StolenCards.Cards.AddCard(_deckCards.GetCard());
             
+            // CREATING THE CARD
             instantiateCard.SetCard(_deckCards.GetCard());
             GameObject cardGo = instantiateCard.CreateCard(parent, parent.position);
-            StolenCards.AddCardGo(cardGo);
             
+            // INITIALIZING THE CARD
             CardComponent card = cardGo.GetComponent<CardComponent>();
+            StolenCards.Cards.AddCard(_deckCards.GetCard(), cardGo);
             card.SetCard(_deckCards.GetCard());
             _deckCards.RemoveCard();
             

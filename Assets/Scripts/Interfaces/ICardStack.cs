@@ -1,5 +1,6 @@
-
 using DVR.Classes;
+using JetBrains.Annotations;
+using UnityEngine;
 
 namespace DVR.Interfaces {
     public interface ICardStack {
@@ -10,28 +11,42 @@ namespace DVR.Interfaces {
         public Card GetCard();
 
         /// <summary>
+        /// Gets the the last game object containing a card inside the stack
+        /// </summary>
+        /// <returns>A game object which contains a card</returns>
+        public GameObject GetCardGameObject();
+
+        /// <summary>
         /// Get a card inside the stack at the index position.
         /// </summary>
         /// <param name="index">The position of the card</param>
         /// <returns>A card</returns>
         public Card GetCard(int index);
-        
+
+        /// <summary>
+        /// Gets a game object which contains a card at the index position
+        /// </summary>
+        /// <param name="index">The position of the game object</param>
+        /// <returns>A game object which contains a card</returns>
+        public GameObject GetCardGameObject(int index);
+
         /// <summary>
         /// Adds a card to the stack.
         /// </summary>
         /// <param name="card">Card to be added</param>
-        public void AddCard(Card card);
+        /// <param name="cardGameObject">Game object that contains that card</param>
+        public void AddCard(Card card, [CanBeNull] GameObject cardGameObject);
 
         /// <summary>
-        /// Remove a card at the index position.
+        /// Removes the last card of the stack with its game object.
+        /// </summary>
+        public void RemoveCard();
+
+        /// <summary>
+        /// Remove a card at the index position with its game object.
         /// </summary>
         /// <param name="index">Index of the card to be removed</param>
         public void RemoveCard(int index);
-
-        /// <summary>
-        /// Removes the last card of the stack.
-        /// </summary>
-        public void RemoveCard();
 
         /// <summary>
         /// Clear the list of cards.
