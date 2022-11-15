@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using DVR.Classes;
 using DVR.Shared;
+using UnityEngine.Assertions;
 using Random = UnityEngine.Random;
 
 namespace DVR.Components {
@@ -15,13 +16,13 @@ namespace DVR.Components {
         public Sprite[] SpadesSprites;
         public Sprite[] ClubsSprites;
         [Header("Card Columns")] 
-        public CardPile[] Columns;
 
         private readonly CardStack _deckCards = new CardStack();
         private const int _CARD_NUMBER = 52;
         private SpriteRenderer _spriteRenderer;
+        
 
-        private void Start() {
+        private void OnEnable() {
             _spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
@@ -67,16 +68,18 @@ namespace DVR.Components {
         }
 
         private IEnumerator DealCards() {
-            int columnNumber = 0, cardsNumber = 1;
+            CardPile[] piles = GameManager.Instance.Piles;
+            int pileNumber = 0, cardsNumber = 1;
             float yOffset = 0;
+            
 
-            for (int i = 0; i < Columns.Length; i++) {
+            for (int i = 0; i < piles.Length; i++) {
                 for (int j = 0; j < cardsNumber; j++) {
                     // VARIABLES
                     CardComponent instantiateCard = CardPrefab.GetComponent<CardComponent>();   
                     Card lastCard = _deckCards.GetCard();
-                    Vector3 position = Columns[columnNumber].transform.position + new Vector3(0, yOffset, 0);
-                    Transform parent = Columns[columnNumber].transform;
+                    Vector3 position = piles[pileNumber].transform.position + new Vector3(0, yOffset, 0);
+                    Transform parent = piles[pileNumber].transform;
 
                     // CREATION OF THE CARD
                     instantiateCard.SetCard(lastCard);
@@ -85,20 +88,20 @@ namespace DVR.Components {
                     // CARD INITIALIZATION
                     CardComponent card = cardGo.GetComponent<CardComponent>();
                     card.SetCard(lastCard);
-                    Columns[columnNumber].AddCard(lastCard, cardGo);
-                    
-                    if (columnNumber != 0 && j + 1 != cardsNumber) {
+
+                    // ADDING THE CARD
+                    piles[pileNumber].AddCard(card.GetCard(), cardGo);
+                    if (pileNumber != 0 && j + 1 != cardsNumber) {
                         card.Flip();
                     }
                     
                     _deckCards.RemoveCard();
                     
                     yOffset -= 0.7f;
-
                     yield return new WaitForSeconds(0.05f);
                 }
 
-                columnNumber++;
+                pileNumber++;
                 cardsNumber++;
                 yOffset = 0;
             }

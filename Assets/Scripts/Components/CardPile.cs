@@ -5,23 +5,32 @@ using UnityEngine;
 namespace DVR.Components
 {
     public class CardPile : MonoBehaviour {
-        private readonly CardStack _cardStack  = new CardStack();
+        protected readonly CardStack CardStack  = new CardStack();
         private readonly List<GameObject> _cardGameObjects = new List<GameObject>();
 
         public void AddCard(Card card, GameObject cardGameObject) {
-            _cardStack.AddCard(card);
+            CardStack.AddCard(card);
             _cardGameObjects.Add(cardGameObject);
+            card.SetCardStack(CardStack);
 
             cardGameObject.transform.parent = transform;
         }
 
         public void RemoveCard() {
-            _cardStack.RemoveCard(); 
+            CardStack.RemoveCard(); 
             _cardGameObjects.RemoveAt(_cardGameObjects.Count - 1);
         }
 
         public Card GetLastCard() {
-            return _cardStack.GetCard();
+            return CardStack.GetCard();
+        }
+
+        public GameObject GetLastCardGo() {
+            return _cardGameObjects[_cardGameObjects.Count - 1];
+        }
+
+        public CardStack GetCardStack() {
+            return CardStack;
         }
     }
 }

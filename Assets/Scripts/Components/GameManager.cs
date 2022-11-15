@@ -15,6 +15,8 @@ namespace DVR.Components {
         #endregion
 
         public Deck Deck;
+        public CardPile[] Piles;
+        public Foundation[] Foundations;
         
         private void Start() {
             Deck.Initialize();

@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 8715233}
   - component: {fileID: 8715235}
   m_Layer: 0
-  m_Name: Column_7
+  m_Name: Pile_7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -204,7 +204,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 16
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8715235
 MonoBehaviour:
@@ -326,7 +326,7 @@ GameObject:
   - component: {fileID: 172453488}
   - component: {fileID: 172453490}
   m_Layer: 0
-  m_Name: Column_4
+  m_Name: Pile_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -395,7 +395,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &172453490
 MonoBehaviour:
@@ -421,7 +421,7 @@ GameObject:
   - component: {fileID: 208187430}
   - component: {fileID: 208187432}
   m_Layer: 0
-  m_Name: Column_1
+  m_Name: Pile_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -490,7 +490,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &208187432
 MonoBehaviour:
@@ -533,8 +533,8 @@ Transform:
   m_LocalPosition: {x: 12, y: 6.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 2111098966}
-  m_RootOrder: 1
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &329795409
 SpriteRenderer:
@@ -609,7 +609,7 @@ GameObject:
   m_Component:
   - component: {fileID: 342787851}
   m_Layer: 0
-  m_Name: ---- COLUMNS ----
+  m_Name: ---- PILES ----
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -627,7 +627,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
@@ -740,7 +740,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 17
+  m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &732490489
 GameObject:
@@ -772,6 +772,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Deck: {fileID: 1509663660}
+  Piles:
+  - {fileID: 208187432}
+  - {fileID: 970906811}
+  - {fileID: 1770088024}
+  - {fileID: 172453490}
+  - {fileID: 1061814723}
+  - {fileID: 2035638514}
+  - {fileID: 8715235}
+  Foundations:
+  - {fileID: 1930300003}
+  - {fileID: 1881149622}
+  - {fileID: 111094534}
+  - {fileID: 1089867588}
 --- !u!4 &732490491
 Transform:
   m_ObjectHideFlags: 0
@@ -784,7 +797,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &910134915
 GameObject:
@@ -866,7 +879,7 @@ Transform:
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 18
+  m_RootOrder: 20
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &970906808
 GameObject:
@@ -880,7 +893,7 @@ GameObject:
   - component: {fileID: 970906809}
   - component: {fileID: 970906811}
   m_Layer: 0
-  m_Name: Column_2
+  m_Name: Pile_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -949,7 +962,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &970906811
 MonoBehaviour:
@@ -991,7 +1004,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1061814720
 GameObject:
@@ -1005,7 +1018,7 @@ GameObject:
   - component: {fileID: 1061814721}
   - component: {fileID: 1061814723}
   m_Layer: 0
-  m_Name: Column_5
+  m_Name: Pile_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1074,7 +1087,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1061814723
 MonoBehaviour:
@@ -1244,8 +1257,8 @@ Transform:
   m_LocalPosition: {x: 15, y: 6.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 2111098966}
-  m_RootOrder: 0
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1509663658
 SpriteRenderer:
@@ -1394,14 +1407,6 @@ MonoBehaviour:
   - {fileID: -3176300559776780333, guid: 862de03792d0ec248b762155c465ae60, type: 3}
   - {fileID: -350025111609970391, guid: 862de03792d0ec248b762155c465ae60, type: 3}
   - {fileID: 5645846742689438157, guid: 862de03792d0ec248b762155c465ae60, type: 3}
-  Columns:
-  - {fileID: 208187432}
-  - {fileID: 970906811}
-  - {fileID: 1770088024}
-  - {fileID: 172453490}
-  - {fileID: 1061814723}
-  - {fileID: 2035638514}
-  - {fileID: 8715235}
 --- !u!1 &1770088021
 GameObject:
   m_ObjectHideFlags: 0
@@ -1414,7 +1419,7 @@ GameObject:
   - component: {fileID: 1770088022}
   - component: {fileID: 1770088024}
   m_Layer: 0
-  m_Name: Column_3
+  m_Name: Pile_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1483,7 +1488,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1770088024
 MonoBehaviour:
@@ -1701,7 +1706,7 @@ GameObject:
   - component: {fileID: 2035638512}
   - component: {fileID: 2035638514}
   m_Layer: 0
-  m_Name: Column_6
+  m_Name: Pile_6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1770,7 +1775,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2035638514
 MonoBehaviour:
@@ -1794,7 +1799,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2111098966}
   m_Layer: 0
-  m_Name: DECK
+  m_Name: ---- DECK ----
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1810,9 +1815,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1509663657}
-  - {fileID: 329795408}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
