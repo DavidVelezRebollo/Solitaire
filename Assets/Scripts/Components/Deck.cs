@@ -145,6 +145,8 @@ namespace DVR.Components {
         /// Handles the click of the mouse
         /// </summary>
         private void HandleMouseClick() {
+            EventManager.Instance.CardDraw();
+            
             if (!_deckCards.HasCards()) {
                 int cardsStolen = StolenCards.GetStack().CardCount();
                 
@@ -158,7 +160,7 @@ namespace DVR.Components {
             
             CardComponent instantiateCard = CardPrefab.GetComponent<CardComponent>();
             Transform parent = StolenCards.transform;
-            
+
             // CREATING THE CARD
             instantiateCard.SetCard(_deckCards.GetCard());
             GameObject cardGo = instantiateCard.CreateCard(parent, parent.position);
@@ -167,8 +169,15 @@ namespace DVR.Components {
             CardComponent card = cardGo.GetComponent<CardComponent>();
             StolenCards.AddCard(_deckCards.GetCard(), cardGo);
             card.SetCard(_deckCards.GetCard());
+            card.SetPile(StolenCards);
             _deckCards.RemoveCard();
             
+            // DISABLING COLLIDERS ON THE PREVIOUS STOLEN CARDS
+            if (StolenCards.GetStack().HasCards() && StolenCards.GetStack().CardCount() >= 2)
+                StolenCards.GetCardComponent(StolenCards.GetStack().CardCount() - 2).DisableCollider();
+
+            // DEBUG - TO DELETE
+            Debug.Log(StolenCards.GetStack().ToString());
         }
         
         #endregion

@@ -5,13 +5,13 @@ using DVR.Classes;
 
 namespace DVR.Components {
     public class CardComponent : MonoBehaviour {
-        [Tooltip("Sprite Renderer component attached to the card")]
-        [SerializeField] private SpriteRenderer SpriteRenderer;
-        [Tooltip("Box Collider component attached to the card")]
-        [SerializeField] private BoxCollider2D Collider;
         [Tooltip("Reverse of the card sprite")]
         [SerializeField] private Sprite ReverseCard;
         
+        //Sprite Renderer component attached to the card
+        private SpriteRenderer _spriteRenderer;
+        //Box Collider component attached to the card
+        private BoxCollider2D _collider;
         // Card contained in the component
         private Card _card;
         // Pile where the card is located
@@ -22,24 +22,35 @@ namespace DVR.Components {
         private Vector3 _cardPosition;
         // Determines if the card is moving
         private bool _moving;
+        // Determines if the card can be clicked
+        private bool _canClick;
+        // Determines if the collider is enabled
+        private bool _colEnabled = true;
         // Speed at which the card moves
         private const float _CARD_SPEED = 0.3f;
 
         #region Unity Events
+
+        private void OnEnable() {
+            _spriteRenderer = GetComponent<SpriteRenderer>();
+            _collider = GetComponent<BoxCollider2D>();
+        }
+
         private void Update() {
-            SpriteRenderer.sortingOrder = !_moving ? _card.GetSortingOrder() : GameManager.Instance.GetMaxSortingOrder() + 1;
-            
+            _spriteRenderer.sortingOrder = !_moving ? _card.GetSortingOrder() : GameManager.Instance.GetMaxSortingOrder() + 1;
+
             if (transform.position == _cardPosition) _moving = false;
             if (!_card.IsVisible() || _moving) {
-                Collider.enabled = false;
+                _canClick = false;
                 
                 if(_moving)
                     transform.position = Vector3.MoveTowards(transform.position, _cardPosition, _CARD_SPEED);
                 
-                return;
             }
+            else _canClick = true;
             
-            Collider.enabled = true;
+            
+            _collider.enabled = _canClick && _colEnabled;
         }
         
         private void OnMouseOver() {
@@ -73,16 +84,28 @@ namespace DVR.Components {
             bool found = false;
 
             while (i < piles.Length && !found) {
-                Card lastCard = piles[i].GetStack().GetCard();
-                GameObject lastCardGo = piles[i].GetStack().GetCardGameObject();
+                if(piles[i].GetStack().HasCards()) {
+                    Card lastCard = piles[i].GetStack().GetCard();
 
-                if (_card.CanPlace(lastCard)) {
-                    _cardPosition = lastCardGo.transform.position - new Vector3(0, 0.7f, 0);
-                    
-                    ChangePile(piles[i]);
+                    if (_card.CanPlace(lastCard)) {
+                        GameObject lastCardGo = piles[i].GetStack().GetCardGameObject();
+                        _cardPosition = lastCardGo.transform.position - new Vector3(0, 0.7f, 0);
 
-                    _moving = true;
-                    found = true;
+                        ChangePile(piles[i]);
+
+                        _moving = true;
+                        found = true;
+                    }
+                }
+                else {
+                    if (_card.GetCardValue() == 13) {
+                        _cardPosition = piles[i].transform.position;
+
+                        ChangePile(piles[i]);
+
+                        _moving = true;
+                        found = true;
+                    }
                 }
 
                 i++;
@@ -111,7 +134,9 @@ namespace DVR.Components {
         /// <param name="card">The card to be set</param>
         public void SetCard(Card card) {
             _card = card;
-            SpriteRenderer.sprite = _card.IsVisible() ?  card.GetCardSprite() : ReverseCard;
+            
+            if(_spriteRenderer != null)
+                _spriteRenderer.sprite = _card.IsVisible() ?  card.GetCardSprite() : ReverseCard;
         }
 
         /// <summary>
@@ -120,6 +145,20 @@ namespace DVR.Components {
         /// <param name="newPile">The pile to be set</param>
         public void SetPile(CardPile newPile) {
             _currentPile = newPile;
+        }
+        
+        /// <summary>
+        /// Disable the box collider of the card
+        /// </summary>
+        public void DisableCollider() {
+            _colEnabled = false;
+        }
+
+        /// <summary>
+        /// Enables the collider of the card
+        /// </summary>
+        public void EnableCollider() {
+            _colEnabled = true;
         }
         
         #endregion
@@ -140,12 +179,13 @@ namespace DVR.Components {
             
             // FLIP THE CARD, IF THERE IS A CARD, OF THE LAST PILE
             if (lastPile.GetStack().HasCards()) {
-                int previousCard = lastPile.GetStack().CardCount() - 1;
-                        
-                if(!lastPile.GetStack().GetCard(previousCard).IsVisible())
-                    lastPile.GetCardComponent(previousCard).Flip();
+
+                if(!lastPile.GetStack().GetCard().IsVisible())
+                    lastPile.GetCardComponent().Flip();
             }
             
+            EventManager.Instance.CardMoved();
+
             // INCREASE AND DECREASE OF THE SORTING ORDER
             lastPile.GetStack().DecreaseMaxSortingOrder();
             _currentPile.GetStack().IncreaseMaxSortingOrder();
@@ -161,7 +201,7 @@ namespace DVR.Components {
         /// </summary>
         public void Flip() {
             _card.SetVisible(!_card.IsVisible());
-            SpriteRenderer.sprite = _card.IsVisible() ?  _card.GetCardSprite() : ReverseCard;
+            _spriteRenderer.sprite = _card.IsVisible() ?  _card.GetCardSprite() : ReverseCard;
         }
 
         #endregion
@@ -183,10 +223,6 @@ namespace DVR.Components {
         }
 
         #endregion
-
-        
-
-
     }
 }
 

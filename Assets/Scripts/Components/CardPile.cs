@@ -15,11 +15,19 @@ namespace DVR.Components
         public CardStack GetStack() {
             return CardStack;
         }
+        
+        /// <summary>
+        /// Gets the last card component inside the stack
+        /// </summary>
+        /// <returns>The last card component inside the stack</returns>
+        public CardComponent GetCardComponent() {
+            return CardStack.GetCardGameObject().GetComponent<CardComponent>();
+        }
 
         /// <summary>
-        /// Gets the last card component of the stack
+        /// Gets the card component at the index position inside the stack
         /// </summary>
-        /// <returns>The last card component of the stack</returns>
+        /// <returns>The position of the card component inside the stack</returns>
         public CardComponent GetCardComponent(int index) {
             return CardStack.GetCardGameObject(index).GetComponent<CardComponent>();
         }

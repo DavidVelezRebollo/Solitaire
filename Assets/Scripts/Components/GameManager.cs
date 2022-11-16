@@ -21,12 +21,15 @@ namespace DVR.Components {
         [Tooltip("Foundations of the game")]
         public Foundation[] Foundations;
 
+        // Max sorting order among the card piles
         private int _maxSortingOrder;
 
         #region Unity Events
 
         private void Start() {
             Deck.Initialize();
+
+            EventManager.Instance.OnCardMoved += CardMoved;
         }
 
         #endregion
@@ -57,6 +60,14 @@ namespace DVR.Components {
         /// </summary>
         public void DecreaseMaxSortingOrder() {
             _maxSortingOrder--;
+        }
+
+        #endregion
+
+        #region Event Methods
+
+        private void CardMoved() {
+            Debug.Log("Card Moved");
         }
 
         #endregion
