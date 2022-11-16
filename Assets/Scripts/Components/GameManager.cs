@@ -14,12 +14,19 @@ namespace DVR.Components {
 
         #endregion
 
+        [Tooltip("Deck of the game")]
         public Deck Deck;
+        [Tooltip("Card piles of the game")]
         public CardPile[] Piles;
+        [Tooltip("Foundations of the game")]
         public Foundation[] Foundations;
-        
+
+        #region Unity Events
+
         private void Start() {
             Deck.Initialize();
         }
+
+        #endregion
     }
 }

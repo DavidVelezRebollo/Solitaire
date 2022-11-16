@@ -1,14 +1,13 @@
-using DVR.Classes;
-using UnityEngine;
-
 namespace DVR.Components
 {
-    public class StolenCards : MonoBehaviour {
-        public readonly CardStack Cards = new CardStack();
-
+    public class StolenCards : CardPile {
+        
+        /// <summary>
+        /// Removes and destroy the last card of the stack
+        /// </summary>
         public void RemoveCard() {
-            Destroy(Cards.GetCardGameObject(Cards.CardCount()));
-            Cards.RemoveCard();
+            Destroy(CardStack.GetCardGameObject(CardStack.CardCount() - 1));
+            CardStack.RemoveCard();
         }
     }
 }

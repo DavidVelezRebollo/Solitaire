@@ -1,9 +1,10 @@
 using DVR.Classes;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace DVR.Interfaces {
     public interface ICardStack {
+        #region Getters
+
         /// <summary>
         /// Gets the last card of the stack.
         /// </summary>
@@ -31,11 +32,27 @@ namespace DVR.Interfaces {
         public GameObject GetCardGameObject(int index);
 
         /// <summary>
+        /// Gets the sorting order of the last card inside the stack
+        /// </summary>
+        /// <returns>The maximum sorting order of the stack</returns>
+        public int GetMaxSortingOrder();
+        
+        /// <summary>
+        /// Return the number of cards inside the stack
+        /// </summary>
+        /// <returns>The number of cards inside the stack</returns>
+        public int CardCount();
+        
+        #endregion
+
+        #region Setters
+
+        /// <summary>
         /// Adds a card to the stack.
         /// </summary>
         /// <param name="card">Card to be added</param>
         /// <param name="cardGameObject">Game object that contains that card</param>
-        public void AddCard(Card card, [CanBeNull] GameObject cardGameObject);
+        public void AddCard(Card card, GameObject cardGameObject = null);
 
         /// <summary>
         /// Removes the last card of the stack with its game object.
@@ -49,16 +66,22 @@ namespace DVR.Interfaces {
         public void RemoveCard(int index);
 
         /// <summary>
+        /// Increase the maximum sorting order by 1
+        /// </summary>
+        public void IncreaseMaxSortingOrder();
+
+        /// <summary>
+        /// Decrease the maximum sorting order by 1
+        /// </summary>
+        public void DecreaseMaxSortingOrder();
+
+        #endregion
+
+        /// <summary>
         /// Clear the list of cards.
         /// </summary>
         public void Clear();
-
-        /// <summary>
-        /// Return the number of cards inside the stack
-        /// </summary>
-        /// <returns>The number of cards inside the stack</returns>
-        public int CardCount();
-
+        
             /// <summary>
         /// Check if the stack has cards left.
         /// </summary>

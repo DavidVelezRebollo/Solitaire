@@ -4,7 +4,7 @@ using UnityEngine;
 namespace DVR.Components
 {
     public class CardPile : MonoBehaviour {
-        public readonly CardStack CardStack  = new CardStack();
+        protected readonly CardStack CardStack  = new CardStack();
 
         /// <summary>
         ///  Adds a card to the last position of the pile
@@ -16,6 +16,14 @@ namespace DVR.Components
             card.SetCardStack(CardStack);
 
             cardGameObject.transform.parent = transform;
+        }
+
+        /// <summary>
+        /// Gets the stack of cards
+        /// </summary>
+        /// <returns>The stack of cards</returns>
+        public CardStack GetStack() {
+            return CardStack;
         }
 
         /// <summary>

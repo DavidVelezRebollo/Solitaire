@@ -12,19 +12,22 @@ namespace DVR.Classes {
         private readonly int _value;
         // Sprite of the card
         private readonly Sprite _sprite;
+        // Sorting Order of the card
+        private int _sortingOrder;
         // The card is visible
         private bool _visible;
         // The stack where the card is located
         private CardStack _currentStack;
 
         #region Constructor
-
+        
         public Card(CardType type, int value, Sprite sprite, bool isVisible) {
             _type = type;
             _value = value;
             _sprite = sprite;
             _visible = isVisible;
 
+            _sortingOrder = 0;
             _currentStack = null;
 
             if (_type == CardType.Diamonds || _type == CardType.Hearts)
@@ -65,6 +68,10 @@ namespace DVR.Classes {
 
         #region Setters
 
+        public void SetSortingOrder(int sortingOrder) {
+            _sortingOrder = sortingOrder;
+        }
+        
         public void SetVisible(bool visible) {
             _visible = visible;
         }
