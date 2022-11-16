@@ -16,8 +16,10 @@ namespace DVR.Components {
         private Card _card;
         // Pile where the card is located
         private CardPile _currentPile;
-        // List of children cards
-        private List<CardComponent> _attachedCards = new List<CardComponent>();
+        // Parent card
+        private CardComponent _parent;
+        // Child card
+        private CardComponent _child;
         // Position of the card
         private Vector3 _cardPosition;
         // Determines if the card is moving
@@ -64,6 +66,10 @@ namespace DVR.Components {
             while (i < foundations.Length && !found) {
                 if (foundations[i].GetFoundationType() == _card.GetCardType() && foundations[i].CanPlace(_card)) {
                     _cardPosition = foundations[i].transform.position;
+
+                    if (foundations[i].GetStack().HasCards()) {
+                        foundations[i].GetCardComponent().DisableCollider();
+                    }
                     
                     ChangePile(foundations[i]);
                     
@@ -77,6 +83,7 @@ namespace DVR.Components {
 
         private void OnMouseDown() {
             if (_moving) return;
+            if (_child != null) return;
 
             CardPile[] piles = GameManager.Instance.Piles;
 
@@ -85,11 +92,9 @@ namespace DVR.Components {
 
             while (i < piles.Length && !found) {
                 if(piles[i].GetStack().HasCards()) {
-                    Card lastCard = piles[i].GetStack().GetCard();
-
-                    if (_card.CanPlace(lastCard)) {
-                        GameObject lastCardGo = piles[i].GetStack().GetCardGameObject();
-                        _cardPosition = lastCardGo.transform.position - new Vector3(0, 0.7f, 0);
+                    if (_card.CanPlace(piles[i].GetStack().GetCard())) {
+                        _cardPosition = piles[i].GetStack().GetCardGameObject().transform.position - 
+                                        new Vector3(0, 0.7f, 0);
 
                         ChangePile(piles[i]);
 
@@ -124,6 +129,22 @@ namespace DVR.Components {
             return _card;
         }
 
+        /// <summary>
+        /// Gets the card which this card is attached to, if it exists
+        /// </summary>
+        /// <returns>The parent card. Null if it don't have a parent</returns>
+        public CardComponent GetParent() {
+            return _parent;
+        } 
+
+        /// <summary>
+        /// Gets the child attached to the card, if it exists
+        /// </summary>
+        /// <returns>The card attached to this card. Null if it doesn't exist</returns>
+        public CardComponent GetChild() {
+            return _child;
+        }
+
         #endregion
 
         #region Setters
@@ -145,6 +166,22 @@ namespace DVR.Components {
         /// <param name="newPile">The pile to be set</param>
         public void SetPile(CardPile newPile) {
             _currentPile = newPile;
+        }
+
+        /// <summary>
+        /// Sets the card parent
+        /// </summary>
+        /// <param name="parent">The new parent card</param>
+        public void SetParent(CardComponent parent) {
+            _parent = parent;
+        }
+
+        /// <summary>
+        /// Sets a child card
+        /// </summary>
+        /// <param name="child">The new child card</param>
+        public void SetChild(CardComponent child) {
+            _child = child;
         }
         
         /// <summary>
@@ -171,17 +208,27 @@ namespace DVR.Components {
         /// <param name="newPile">The pile to be replaced</param>
         private void ChangePile(CardPile newPile) {
             CardPile lastPile = _currentPile;
-            
+            CardComponent parentCard = null;
+
+            if (newPile.GetStack().HasCards()) parentCard = newPile.GetCardComponent();
+
             // ADDING THE CARD TO THE NEW PILE AND REMOVING FROM THE LAST PILE
-            newPile.AddCard(_currentPile.GetStack().GetCard(), _currentPile.GetStack().GetCardGameObject());
+            newPile.AddCard(_card, gameObject);
             _currentPile.GetStack().RemoveCard();
             _currentPile = newPile;
-            
+
+                // ATTACH THE CARD
+            if(parentCard != null) AttachCard(parentCard);
+
             // FLIP THE CARD, IF THERE IS A CARD, OF THE LAST PILE
             if (lastPile.GetStack().HasCards()) {
-
-                if(!lastPile.GetStack().GetCard().IsVisible())
-                    lastPile.GetCardComponent().Flip();
+                if (lastPile.GetType() != typeof(Foundation)) {
+                    if (!lastPile.GetStack().GetCard().IsVisible())
+                        lastPile.GetCardComponent().Flip();
+                }
+                else {
+                    lastPile.GetCardComponent().EnableCollider();
+                }
             }
             
             EventManager.Instance.CardMoved();
@@ -220,6 +267,15 @@ namespace DVR.Components {
             cardGo.name = _card.ToString();
             
             return cardGo;
+        }
+
+        /// <summary>
+        /// Attaches this card to a card parent
+        /// </summary>
+        /// <param name="parent">The card to attach this card</param>
+        public void AttachCard(CardComponent parent) {
+            parent.SetChild(this);
+            SetParent(parent);
         }
 
         #endregion

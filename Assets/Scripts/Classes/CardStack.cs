@@ -56,6 +56,7 @@ namespace DVR.Classes {
         
         public void RemoveCard(int index) {
             _cards.RemoveAt(index);
+            _cardsGameObjects.RemoveAt(_cardsGameObjects.Count - 1);
         }
 
         public void IncreaseMaxSortingOrder() {
@@ -93,6 +94,7 @@ namespace DVR.Classes {
         public override string ToString() {
             string result = "";
 
+            result += "Max Sorting Order: " + _maxSortingOrder + "\n";
             result += "Cards in the stack: " + CardCount() + "\n Cards: ";
 
             for (int i = 0; i < CardCount(); i++) {

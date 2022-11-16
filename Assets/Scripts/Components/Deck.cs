@@ -10,7 +10,7 @@ namespace DVR.Components {
         [Tooltip("Prefab of the card")]
         [SerializeField] private GameObject CardPrefab;
         [Tooltip("Pile where the stolen cards will be created")]
-        [SerializeField] private StolenCards StolenCards;
+        [SerializeField] private CardPile StolenCards;
         
         [Header("Cards Sprites")]
         [Tooltip("Sprites of the diamond cards")]
@@ -152,9 +152,10 @@ namespace DVR.Components {
                 
                 for (int i = 0; i < cardsStolen; i++) {
                     _deckCards.AddCard(StolenCards.GetStack().GetCard(), null);
-                    StolenCards.RemoveCard();
+                    StolenCards.GetStack().DecreaseMaxSortingOrder();
+                    StolenCards.DestroyCard();
                 }
-                
+
                 return;
             }
             
@@ -175,6 +176,10 @@ namespace DVR.Components {
             // DISABLING COLLIDERS ON THE PREVIOUS STOLEN CARDS
             if (StolenCards.GetStack().HasCards() && StolenCards.GetStack().CardCount() >= 2)
                 StolenCards.GetCardComponent(StolenCards.GetStack().CardCount() - 2).DisableCollider();
+            
+            // HANDLE SORTING ORDER
+            StolenCards.GetStack().IncreaseMaxSortingOrder();
+            card.GetCard().SetSortingOrder(StolenCards.GetStack().GetMaxSortingOrder());
 
             // DEBUG - TO DELETE
             Debug.Log(StolenCards.GetStack().ToString());
