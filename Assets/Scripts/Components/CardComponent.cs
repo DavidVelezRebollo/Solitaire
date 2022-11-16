@@ -27,6 +27,8 @@ namespace DVR.Components {
 
         #region Unity Events
         private void Update() {
+            SpriteRenderer.sortingOrder = !_moving ? _card.GetSortingOrder() : GameManager.Instance.GetMaxSortingOrder() + 1;
+            
             if (transform.position == _cardPosition) _moving = false;
             if (!_card.IsVisible() || _moving) {
                 Collider.enabled = false;
@@ -131,10 +133,12 @@ namespace DVR.Components {
         private void ChangePile(CardPile newPile) {
             CardPile lastPile = _currentPile;
             
+            // ADDING THE CARD TO THE NEW PILE AND REMOVING FROM THE LAST PILE
             newPile.AddCard(_currentPile.GetStack().GetCard(), _currentPile.GetStack().GetCardGameObject());
             _currentPile.GetStack().RemoveCard();
             _currentPile = newPile;
             
+            // FLIP THE CARD, IF THERE IS A CARD, OF THE LAST PILE
             if (lastPile.GetStack().HasCards()) {
                 int previousCard = lastPile.GetStack().CardCount() - 1;
                         
@@ -142,6 +146,12 @@ namespace DVR.Components {
                     lastPile.GetCardComponent(previousCard).Flip();
             }
             
+            // INCREASE AND DECREASE OF THE SORTING ORDER
+            lastPile.GetStack().DecreaseMaxSortingOrder();
+            _currentPile.GetStack().IncreaseMaxSortingOrder();
+            _card.SetSortingOrder(_currentPile.GetStack().GetMaxSortingOrder());
+
+            // DEBUG - TO DELETE
             Debug.Log(lastPile.GetStack().ToString());
             Debug.Log(_currentPile.GetStack().ToString());
         }

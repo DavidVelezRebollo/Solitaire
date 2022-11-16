@@ -111,6 +111,7 @@ namespace DVR.Components {
                     Transform parent = piles[i].transform;
 
                     // CREATION OF THE CARD
+                    lastCard.SetSortingOrder(j);
                     instantiateCard.SetCard(lastCard);
                     GameObject cardGo = instantiateCard.CreateCard(parent, position);
 
@@ -126,7 +127,11 @@ namespace DVR.Components {
                     }
                     
                     _deckCards.RemoveCard();
+                    piles[i].GetStack().IncreaseMaxSortingOrder();
                     
+                    if(i > GameManager.Instance.GetMaxSortingOrder())
+                        GameManager.Instance.IncreaseMaxSortingOrder();
+
                     yOffset -= 0.7f;
                     yield return new WaitForSeconds(0.05f);
                 }

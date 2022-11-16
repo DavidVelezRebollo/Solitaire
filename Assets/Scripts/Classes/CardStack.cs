@@ -9,7 +9,7 @@ namespace DVR.Classes {
         // Game Object attached to the stack cards
         private readonly List<GameObject> _cardsGameObjects = new List<GameObject>();
         // Maximum sorting order of the stack
-        private int _maxSortingOrder;
+        private int _maxSortingOrder = -1;
 
         #region Getters
 
