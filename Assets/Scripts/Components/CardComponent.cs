@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using DVR.Classes;
 
@@ -12,6 +10,8 @@ namespace DVR.Components {
         private SpriteRenderer _spriteRenderer;
         //Box Collider component attached to the card
         private BoxCollider2D _collider;
+        // Initial size of the collider
+        private Vector2 _initialColliderSize;
         // Card contained in the component
         private Card _card;
         // Pile where the card is located
@@ -36,6 +36,9 @@ namespace DVR.Components {
         private void OnEnable() {
             _spriteRenderer = GetComponent<SpriteRenderer>();
             _collider = GetComponent<BoxCollider2D>();
+
+            // Initial Collider size
+            _initialColliderSize = _collider.size;
         }
 
         private void Update() {
@@ -50,16 +53,25 @@ namespace DVR.Components {
                 
             }
             else _canClick = true;
-            
+
+            if (_child != null) {
+                _collider.size = new Vector2(2.1f, 0.7f);
+                _collider.offset = new Vector2(0f, 1.15f);
+            }
+            else {
+                _collider.size = _initialColliderSize;
+                _collider.offset = Vector2.zero;
+            }
             
             _collider.enabled = _canClick && _colEnabled;
         }
         
         private void OnMouseOver() {
-            if (!Input.GetMouseButtonDown(1) || _moving) return;
+            if (!Input.GetMouseButtonDown(1) || _moving || _child != null) return;
 
             Foundation[] foundations = GameManager.Instance.Foundations;
-
+            CardPile lastPile = _currentPile;
+            
             int i = 0;
             bool found = false;
 
@@ -71,8 +83,8 @@ namespace DVR.Components {
                         foundations[i].GetCardComponent().DisableCollider();
                     }
                     
-                    ChangePile(foundations[i]);
-                    
+                    ChangePile(foundations[i], false);
+
                     _moving = true;
                     found = true;
                 }
@@ -83,7 +95,6 @@ namespace DVR.Components {
 
         private void OnMouseDown() {
             if (_moving) return;
-            if (_child != null) return;
 
             CardPile[] piles = GameManager.Instance.Piles;
 
@@ -96,7 +107,7 @@ namespace DVR.Components {
                         _cardPosition = piles[i].GetStack().GetCardGameObject().transform.position - 
                                         new Vector3(0, 0.7f, 0);
 
-                        ChangePile(piles[i]);
+                        ChangePile(piles[i], true);
 
                         _moving = true;
                         found = true;
@@ -106,7 +117,7 @@ namespace DVR.Components {
                     if (_card.GetCardValue() == 13) {
                         _cardPosition = piles[i].transform.position;
 
-                        ChangePile(piles[i]);
+                        ChangePile(piles[i], false);
 
                         _moving = true;
                         found = true;
@@ -167,21 +178,9 @@ namespace DVR.Components {
         public void SetPile(CardPile newPile) {
             _currentPile = newPile;
         }
-
-        /// <summary>
-        /// Sets the card parent
-        /// </summary>
-        /// <param name="parent">The new parent card</param>
-        public void SetParent(CardComponent parent) {
-            _parent = parent;
-        }
-
-        /// <summary>
-        /// Sets a child card
-        /// </summary>
-        /// <param name="child">The new child card</param>
-        public void SetChild(CardComponent child) {
-            _child = child;
+        
+        public void SetPosition(Vector3 position) {
+            _cardPosition = position;
         }
         
         /// <summary>
@@ -191,56 +190,42 @@ namespace DVR.Components {
             _colEnabled = false;
         }
 
-        /// <summary>
-        /// Enables the collider of the card
-        /// </summary>
-        public void EnableCollider() {
-            _colEnabled = true;
-        }
-        
         #endregion
 
         #region Methods
-        
+
         /// <summary>
         /// Change between the pile of the card and a pile objective
         /// </summary>
         /// <param name="newPile">The pile to be replaced</param>
-        private void ChangePile(CardPile newPile) {
+        /// <param name="attachCard">Checks if we want to attach the card transform at the new pile</param>
+        private void ChangePile(CardPile newPile, bool attachCard) {
             CardPile lastPile = _currentPile;
             CardComponent parentCard = null;
 
             if (newPile.GetStack().HasCards()) parentCard = newPile.GetCardComponent();
 
             // ADDING THE CARD TO THE NEW PILE AND REMOVING FROM THE LAST PILE
-            newPile.AddCard(_card, gameObject);
-            _currentPile.GetStack().RemoveCard();
-            _currentPile = newPile;
+            if(_child != null) {
+                HandleAttachedCards(newPile, attachCard);
+            }
+            else {
+                newPile.AddCard(_card, gameObject, attachCard);
+                _currentPile.GetStack().RemoveCard();
+                _currentPile = newPile;
+            }
 
-                // ATTACH THE CARD
+            // ATTACH THE CARD
             if(parentCard != null) AttachCard(parentCard);
 
             // FLIP THE CARD, IF THERE IS A CARD, OF THE LAST PILE
-            if (lastPile.GetStack().HasCards()) {
-                if (lastPile.GetType() != typeof(Foundation)) {
-                    if (!lastPile.GetStack().GetCard().IsVisible())
-                        lastPile.GetCardComponent().Flip();
-                }
-                else {
-                    lastPile.GetCardComponent().EnableCollider();
-                }
-            }
+            HandleLastCard(lastPile);
             
+            // EVENT INVOCATION
             EventManager.Instance.CardMoved();
 
             // INCREASE AND DECREASE OF THE SORTING ORDER
-            lastPile.GetStack().DecreaseMaxSortingOrder();
-            _currentPile.GetStack().IncreaseMaxSortingOrder();
-            _card.SetSortingOrder(_currentPile.GetStack().GetMaxSortingOrder());
-
-            // DEBUG - TO DELETE
-            Debug.Log(lastPile.GetStack().ToString());
-            Debug.Log(_currentPile.GetStack().ToString());
+            HandleSortingOrder(lastPile);
         }
 
         /// <summary>
@@ -265,17 +250,61 @@ namespace DVR.Components {
             GameObject cardGo = Instantiate(gameObject, position, Quaternion.identity);
             cardGo.transform.parent = parent;
             cardGo.name = _card.ToString();
-            
+
             return cardGo;
         }
 
-        /// <summary>
-        /// Attaches this card to a card parent
-        /// </summary>
-        /// <param name="parent">The card to attach this card</param>
-        public void AttachCard(CardComponent parent) {
-            parent.SetChild(this);
-            SetParent(parent);
+        #endregion
+
+        #region Auxiliar Methods
+
+        private static void HandleLastCard(CardPile lastPile) {
+            if (!lastPile.GetStack().HasCards()) return;
+            
+            if (lastPile.GetType() != typeof(Foundation) && !lastPile.GetStack().GetCard().IsVisible()) 
+                lastPile.GetCardComponent().Flip();
+            else 
+                lastPile.GetCardComponent()._colEnabled = true;
+        }
+
+        private void HandleAttachedCards(CardPile newPile, bool attachCard) {
+            newPile.AddCard(_card, gameObject, attachCard);
+            _currentPile.GetStack().RemoveCard(_card, gameObject);
+            _currentPile = newPile;
+                
+            CardComponent attachedCard = _child;
+            while (attachedCard != null) {
+                newPile.AddCard(attachedCard._card, attachedCard.gameObject, attachCard);
+                attachedCard._currentPile.GetStack().RemoveCard(attachedCard._card, attachedCard.gameObject);
+                attachedCard._currentPile = newPile;
+                    
+                attachedCard = attachedCard._child;
+            }
+        }
+
+        private void HandleSortingOrder(CardPile lastPile) {
+            lastPile.GetStack().DecreaseMaxSortingOrder();
+            _currentPile.GetStack().IncreaseMaxSortingOrder();
+            _card.SetSortingOrder(_currentPile.GetStack().GetMaxSortingOrder());
+
+            if (_child == null) return;
+
+            CardComponent attachedCard = _child;
+            while (attachedCard != null) {
+                lastPile.GetStack().DecreaseMaxSortingOrder();
+                attachedCard._currentPile.GetStack().IncreaseMaxSortingOrder();
+                attachedCard._card.SetSortingOrder(attachedCard._currentPile.GetStack().GetMaxSortingOrder());
+                
+                attachedCard = attachedCard._child;
+            }
+        }
+        
+        private void AttachCard(CardComponent parent) {
+            if (_parent != null)
+                _parent._child = null;
+
+            parent._child = this;
+            _parent = parent;
         }
 
         #endregion

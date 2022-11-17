@@ -41,10 +41,12 @@ namespace DVR.Components
         /// </summary>
         /// <param name="card">Card proprieties</param>
         /// <param name="cardGameObject">Game object where the card is instantiated</param>
-        public void AddCard(Card card, GameObject cardGameObject) {
+        /// <param name="attachCard">Checks if the card is going to be attached to another one</param>
+        public void AddCard(Card card, GameObject cardGameObject, bool attachCard) {
             CardStack.AddCard(card, cardGameObject);
 
-            cardGameObject.transform.parent = transform;
+            cardGameObject.transform.parent =
+                attachCard ? CardStack.GetCardGameObject(CardStack.CardCount() - 2).transform : transform;
         }
         
         /// <summary>

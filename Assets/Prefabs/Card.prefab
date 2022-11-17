@@ -96,8 +96,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b67548e145ba8b5469333df13bd67c50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpriteRenderer: {fileID: 8658823971787862943}
-  Collider: {fileID: 1932357461403122477}
   ReverseCard: {fileID: -4148303396302949269, guid: 862de03792d0ec248b762155c465ae60, type: 3}
 --- !u!61 &1932357461403122477
 BoxCollider2D:

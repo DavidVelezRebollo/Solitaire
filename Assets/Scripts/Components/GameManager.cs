@@ -54,20 +54,18 @@ namespace DVR.Components {
         public void IncreaseMaxSortingOrder() {
             _maxSortingOrder++;
         }
-        
-        /// <summary>
-        /// Decrease the maximum sorting order by 1
-        /// </summary>
-        public void DecreaseMaxSortingOrder() {
-            _maxSortingOrder--;
-        }
 
         #endregion
 
         #region Event Methods
 
         private void CardMoved() {
-            Debug.Log("Card Moved");
+            foreach (CardPile pile in Piles) {
+                int maxSorting = pile.GetStack().GetMaxSortingOrder();
+
+                if (_maxSortingOrder < maxSorting)
+                    _maxSortingOrder = maxSorting;
+            }
         }
 
         #endregion

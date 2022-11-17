@@ -59,6 +59,11 @@ namespace DVR.Classes {
             _cardsGameObjects.RemoveAt(_cardsGameObjects.Count - 1);
         }
 
+        public void RemoveCard(Card card, GameObject gameObject) {
+            _cards.Remove(card);
+            _cardsGameObjects.Remove(gameObject);
+        }
+
         public void IncreaseMaxSortingOrder() {
             _maxSortingOrder++;
         }

@@ -66,6 +66,13 @@ namespace DVR.Interfaces {
         public void RemoveCard(int index);
 
         /// <summary>
+        /// Remove a certain card from the stack
+        /// </summary>
+        /// <param name="card">The card to remove</param>
+        /// <param name="cardGameObject">The Game Object attached to the card</param>
+        public void RemoveCard(Card card, GameObject cardGameObject);
+
+        /// <summary>
         /// Increase the maximum sorting order by 1
         /// </summary>
         public void IncreaseMaxSortingOrder();

@@ -119,9 +119,10 @@ namespace DVR.Components {
                     CardComponent card = cardGo.GetComponent<CardComponent>();
                     card.SetCard(lastCard);
                     card.SetPile(piles[i]);
+                    card.SetPosition(position);
 
                     // ADDING THE CARD
-                    piles[i].AddCard(card.GetCard(), cardGo);
+                    piles[i].AddCard(card.GetCard(), cardGo, false);
                     if (i != 0 && j + 1 != cardsNumber) {
                         card.Flip();
                     }
@@ -168,9 +169,10 @@ namespace DVR.Components {
             
             // INITIALIZING THE CARD
             CardComponent card = cardGo.GetComponent<CardComponent>();
-            StolenCards.AddCard(_deckCards.GetCard(), cardGo);
+            StolenCards.AddCard(_deckCards.GetCard(), cardGo, false);
             card.SetCard(_deckCards.GetCard());
             card.SetPile(StolenCards);
+            card.SetPosition(StolenCards.transform.position);
             _deckCards.RemoveCard();
             
             // DISABLING COLLIDERS ON THE PREVIOUS STOLEN CARDS
