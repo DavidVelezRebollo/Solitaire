@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 8715235}
   m_Layer: 0
   m_Name: Pile_7
-  m_TagString: Untagged
+  m_TagString: Pile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -231,7 +231,7 @@ GameObject:
   - component: {fileID: 111094534}
   m_Layer: 0
   m_Name: Heart_Foundation
-  m_TagString: Untagged
+  m_TagString: Foundation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -327,7 +327,7 @@ GameObject:
   - component: {fileID: 172453490}
   m_Layer: 0
   m_Name: Pile_4
-  m_TagString: Untagged
+  m_TagString: Pile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -422,7 +422,7 @@ GameObject:
   - component: {fileID: 208187432}
   m_Layer: 0
   m_Name: Pile_1
-  m_TagString: Untagged
+  m_TagString: Pile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -905,20 +905,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 372ff113ed96a3345a8ca2133dda3692, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Deck: {fileID: 1509663660}
-  Piles:
-  - {fileID: 208187432}
-  - {fileID: 970906811}
-  - {fileID: 1770088024}
-  - {fileID: 172453490}
-  - {fileID: 1061814723}
-  - {fileID: 2035638514}
-  - {fileID: 8715235}
-  Foundations:
-  - {fileID: 1930300003}
-  - {fileID: 1881149622}
-  - {fileID: 111094534}
-  - {fileID: 1089867588}
 --- !u!4 &732490491
 Transform:
   m_ObjectHideFlags: 0
@@ -1071,7 +1057,7 @@ GameObject:
   - component: {fileID: 970906811}
   m_Layer: 0
   m_Name: Pile_2
-  m_TagString: Untagged
+  m_TagString: Pile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1196,7 +1182,7 @@ GameObject:
   - component: {fileID: 1061814723}
   m_Layer: 0
   m_Name: Pile_5
-  m_TagString: Untagged
+  m_TagString: Pile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1291,7 +1277,7 @@ GameObject:
   - component: {fileID: 1089867588}
   m_Layer: 0
   m_Name: Diamond_Foundation
-  m_TagString: Untagged
+  m_TagString: Foundation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1535,7 +1521,7 @@ GameObject:
   - component: {fileID: 1509663659}
   m_Layer: 0
   m_Name: Deck
-  m_TagString: Untagged
+  m_TagString: Deck
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1645,6 +1631,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CardPrefab: {fileID: 5887390843604214478, guid: d3c134763502a7c41b223e1be4d9d013, type: 3}
   StolenCards: {fileID: 329795410}
+  Piles:
+  - {fileID: 208187432}
+  - {fileID: 970906811}
+  - {fileID: 1770088024}
+  - {fileID: 172453490}
+  - {fileID: 1061814723}
+  - {fileID: 2035638514}
+  - {fileID: 8715235}
+  Foundations:
+  - {fileID: 1930300003}
+  - {fileID: 1881149622}
+  - {fileID: 111094534}
+  - {fileID: 1089867588}
   DiamondSprites:
   - {fileID: -4203433506095509898, guid: 862de03792d0ec248b762155c465ae60, type: 3}
   - {fileID: 938883298820821729, guid: 862de03792d0ec248b762155c465ae60, type: 3}
@@ -2067,7 +2066,7 @@ GameObject:
   - component: {fileID: 1770088024}
   m_Layer: 0
   m_Name: Pile_3
-  m_TagString: Untagged
+  m_TagString: Pile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2162,7 +2161,7 @@ GameObject:
   - component: {fileID: 1881149622}
   m_Layer: 0
   m_Name: Club_Foundation
-  m_TagString: Untagged
+  m_TagString: Foundation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2392,7 +2391,7 @@ GameObject:
   - component: {fileID: 1930300003}
   m_Layer: 0
   m_Name: Spade_Foundation
-  m_TagString: Untagged
+  m_TagString: Foundation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2488,7 +2487,7 @@ GameObject:
   - component: {fileID: 2035638514}
   m_Layer: 0
   m_Name: Pile_6
-  m_TagString: Untagged
+  m_TagString: Pile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
