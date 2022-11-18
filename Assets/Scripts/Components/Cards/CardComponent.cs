@@ -55,7 +55,9 @@ namespace DVR.Components.Cards {
         private void Update() {
             _spriteRenderer.sortingOrder = !_moving ? _card.GetSortingOrder() : GameManager.Instance.GetMaxSortingOrder() + 1;
 
-            if (transform.position == _cardPosition) _moving = false;
+            if (transform.position == _cardPosition) {
+                _moving = false;
+            }
             if (!_card.IsVisible() || _moving) {
                 _canClick = false;
                 
@@ -215,11 +217,11 @@ namespace DVR.Components.Cards {
             // FLIP THE CARD, IF THERE IS A CARD, OF THE LAST PILE
             HandleLastCard(_previousPile);
             
-            // EVENT INVOCATION
-            EventManager.Instance.CardMoved();
-
             // INCREASE AND DECREASE OF THE SORTING ORDER
             HandleSortingOrder(_previousPile);
+
+            // EVENT INVOCATION
+            EventManager.Instance.OnCardMovedInvoke();
         }
 
         /// <summary>
@@ -316,13 +318,13 @@ namespace DVR.Components.Cards {
         private void CardMoved() {
             PileComponent[] piles = _deck.GetPiles();
             GameManager manager = GameManager.Instance;
+            int maxSorting = 0;
 
-            foreach (PileComponent pile in piles) {
-                int maxSorting = pile.GetStack().GetMaxSortingOrder();
+            foreach (PileComponent pile in piles)
+                if (pile.GetStack().GetMaxSortingOrder() > maxSorting)
+                    maxSorting = pile.GetStack().GetMaxSortingOrder();
 
-                if (manager.GetMaxSortingOrder() < maxSorting)
-                    manager.SetMaxSortingOrder(maxSorting);
-            }
+            manager.SetMaxSortingOrder(maxSorting);
         }
 
         #endregion

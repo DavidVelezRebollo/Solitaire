@@ -149,7 +149,7 @@ namespace DVR.Components.Cards {
         /// Handles the click of the mouse
         /// </summary>
         private void HandleMouseClick() {
-            EventManager.Instance.CardDraw();
+            EventManager.Instance.OnCardDrawInvoke();
             
             if (!_deckCards.HasCards()) {
                 int cardsStolen = StolenCards.GetStack().CardCount();

@@ -22,11 +22,11 @@ namespace DVR.Components.Core
 
         #region Events Invokes
 
-        public void CardMoved() {
+        public void OnCardMovedInvoke() {
             OnCardMoved?.Invoke();
         }
 
-        public void CardDraw() {
+        public void OnCardDrawInvoke() {
             OnCardDraw?.Invoke();
         }
 

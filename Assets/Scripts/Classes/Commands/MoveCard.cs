@@ -10,24 +10,16 @@ namespace DVR.Classes.Commands
         private readonly CardStack _stackToMove;
         private readonly CardStack _previousStack;
         
-        public MoveCard(Card card, GameObject cardGameObject, CardStack newStack, CardStack previousStack) {
-            _cardToMove = card;
-            _cardGameObject = cardGameObject;
-            _stackToMove = newStack;
-            _previousStack = previousStack;
+        public MoveCard() {
+            
         }
         
         public void Execute() {
-            Debug.Log("Card Moved");
-            _stackToMove.AddCard(_cardToMove, _cardGameObject);
-            _previousStack.RemoveCard(_cardToMove, _cardGameObject);
-            
-            Debug.Log("New Stack: " +  _stackToMove);
-            Debug.Log("Previous Stack: " + _previousStack);
+            // TODO - Move the card to the new position
         }
 
         public void Undo() {
-            Debug.Log("Undo card movement");
+            // TODO - Undo card to the previous position
         }
     }
 }
