@@ -1,16 +1,23 @@
-using System.Collections;
-using UnityEngine;
-using DVR.Classes;
+using DVR.Classes.Cards;
+using DVR.Components.Core;
 using DVR.Shared;
+
+using System.Collections;
 using Random = UnityEngine.Random;
 
-namespace DVR.Components {
-    public class Deck : MonoBehaviour {
+using UnityEngine;
+
+namespace DVR.Components.Cards {
+    public class DeckComponent : MonoBehaviour {
         [Header("Unity Fields")]
         [Tooltip("Prefab of the card")]
         [SerializeField] private GameObject CardPrefab;
         [Tooltip("Pile where the stolen cards will be created")]
-        [SerializeField] private CardPile StolenCards;
+        [SerializeField] private PileComponent StolenCards;
+        [Tooltip("Card piles of the game")]
+        [SerializeField] private PileComponent[] Piles;
+        [Tooltip("Foundations of the game")]
+        [SerializeField] private FoundationComponent[] Foundations;
         
         [Header("Cards Sprites")]
         [Tooltip("Sprites of the diamond cards")]
@@ -31,10 +38,16 @@ namespace DVR.Components {
 
         #region Unity Events
 
+        private void OnEnable() {
+            InitializeCards();
+            ShuffleDeck();
+            StartCoroutine(DealCards());
+        }
+        
         private void Start() {
             _spriteRenderer = GetComponent<SpriteRenderer>();
         }
-        
+
         private void Update() {
             _spriteRenderer.color = !_deckCards.HasCards() ? 
                 new Color(0f, 0f, 0f, 0.79f) : new Color(1f, 1f, 1f, 1f);
@@ -47,16 +60,7 @@ namespace DVR.Components {
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// Handles the deck and game initialization
-        /// </summary>
-        public void Initialize() {
-            InitializeCards();
-            ShuffleDeck();
-            StartCoroutine(DealCards());
-        }
-
+        
         /// <summary>
         /// Assign the card and add them to the deck
         /// </summary>
@@ -98,17 +102,16 @@ namespace DVR.Components {
         /// </summary>
         /// <returns>Number of seconds between card creation</returns>
         private IEnumerator DealCards() {
-            CardPile[] piles = GameManager.Instance.Piles;
             int cardsNumber = 1;
             float yOffset = 0;
             
-            for (int i = 0; i < piles.Length; i++) {
+            for (int i = 0; i < Piles.Length; i++) {
                 for (int j = 0; j < cardsNumber; j++) {
                     // VARIABLES
                     CardComponent instantiateCard = CardPrefab.GetComponent<CardComponent>();   
                     Card lastCard = _deckCards.GetCard();
-                    Vector3 position = piles[i].transform.position + new Vector3(0, yOffset, 0);
-                    Transform parent = piles[i].transform;
+                    Vector3 position = Piles[i].transform.position + new Vector3(0, yOffset, 0);
+                    Transform parent = Piles[i].transform;
 
                     // CREATION OF THE CARD
                     lastCard.SetSortingOrder(j);
@@ -118,17 +121,17 @@ namespace DVR.Components {
                     // CARD INITIALIZATION
                     CardComponent card = cardGo.GetComponent<CardComponent>();
                     card.SetCard(lastCard);
-                    card.SetPile(piles[i]);
+                    card.SetPile(Piles[i]);
                     card.SetPosition(position);
 
                     // ADDING THE CARD
-                    piles[i].AddCard(card.GetCard(), cardGo, false);
+                    Piles[i].AddCard(card.GetCard(), cardGo, false);
                     if (i != 0 && j + 1 != cardsNumber) {
                         card.Flip();
                     }
                     
                     _deckCards.RemoveCard();
-                    piles[i].GetStack().IncreaseMaxSortingOrder();
+                    Piles[i].GetStack().IncreaseMaxSortingOrder();
                     
                     if(i > GameManager.Instance.GetMaxSortingOrder())
                         GameManager.Instance.IncreaseMaxSortingOrder();
@@ -184,6 +187,18 @@ namespace DVR.Components {
             card.GetCard().SetSortingOrder(StolenCards.GetStack().GetMaxSortingOrder());
         }
         
+        #endregion
+
+        #region Getters
+
+        public FoundationComponent[] GetFoundations() {
+            return Foundations;
+        }
+
+        public PileComponent[] GetPiles() {
+            return Piles;
+        }
+
         #endregion
 
         #region Functions

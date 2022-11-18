@@ -1,9 +1,9 @@
-using DVR.Classes;
+using DVR.Classes.Cards;
 using UnityEngine;
 
-namespace DVR.Components
+namespace DVR.Components.Cards
 {
-    public class CardPile : MonoBehaviour {
+    public class PileComponent : MonoBehaviour {
         protected readonly CardStack CardStack  = new CardStack();
         
         #region Getters

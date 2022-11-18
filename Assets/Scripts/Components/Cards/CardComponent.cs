@@ -1,8 +1,8 @@
 using UnityEngine;
-using DVR.Classes;
-using DVR.Interfaces;
+using DVR.Classes.Cards;
+using DVR.Components.Core;
 
-namespace DVR.Components {
+namespace DVR.Components.Cards {
     public class CardComponent : MonoBehaviour {
         [Tooltip("Reverse of the card sprite")]
         [SerializeField] private Sprite ReverseCard;
@@ -11,14 +11,16 @@ namespace DVR.Components {
         private SpriteRenderer _spriteRenderer;
         //Box Collider component attached to the card
         private BoxCollider2D _collider;
+        // Deck of the game containing the piles and the foundations
+        private DeckComponent _deck;
         // Initial size of the collider
         private Vector2 _initialColliderSize;
         // Card contained in the component
         private Card _card;
         // Pile where the card is located
-        private CardPile _currentPile;
+        private PileComponent _currentPile;
         // Previous pile of the card
-        private CardPile _previousPile;
+        private PileComponent _previousPile;
         // Parent card
         private CardComponent _parent;
         // Child card
@@ -42,6 +44,12 @@ namespace DVR.Components {
 
             // Initial Collider size
             _initialColliderSize = _collider.size;
+            
+            // Getting the game deck
+            _deck = GameObject.FindWithTag("Deck").GetComponent<DeckComponent>();
+            
+            // Moving method
+            EventManager.Instance.OnCardMoved += CardMoved;
         }
 
         private void Update() {
@@ -72,7 +80,7 @@ namespace DVR.Components {
         private void OnMouseOver() {
             if (!Input.GetMouseButtonDown(1) || _moving || _child != null) return;
 
-            Foundation[] foundations = GameManager.Instance.Foundations;
+            FoundationComponent[] foundations = _deck.GetFoundations();
 
             int i = 0;
             bool found = false;
@@ -98,7 +106,7 @@ namespace DVR.Components {
         private void OnMouseDown() {
             if (_moving) return;
 
-            CardPile[] piles = GameManager.Instance.Piles;
+            PileComponent[] piles = _deck.GetPiles();
 
             int i = 0;
             bool found = false;
@@ -161,7 +169,7 @@ namespace DVR.Components {
         /// Sets the pile of the card
         /// </summary>
         /// <param name="newPile">The pile to be set</param>
-        public void SetPile(CardPile newPile) {
+        public void SetPile(PileComponent newPile) {
             _currentPile = newPile;
         }
         
@@ -185,7 +193,7 @@ namespace DVR.Components {
         /// </summary>
         /// <param name="newPile">The pile to be replaced</param>
         /// <param name="attachCard">Checks if we want to attach the card transform at the new pile</param>
-        private void ChangePile(CardPile newPile, bool attachCard) {
+        private void ChangePile(PileComponent newPile, bool attachCard) {
             _previousPile = _currentPile;
             CardComponent parentCard = null;
 
@@ -244,16 +252,16 @@ namespace DVR.Components {
 
         #region Auxiliar Methods
 
-        private static void HandleLastCard(CardPile lastPile) {
+        private static void HandleLastCard(PileComponent lastPile) {
             if (!lastPile.GetStack().HasCards()) return;
             
-            if (lastPile.GetType() != typeof(Foundation) && !lastPile.GetStack().GetCard().IsVisible()) 
+            if (lastPile.GetType() != typeof(FoundationComponent) && !lastPile.GetStack().GetCard().IsVisible()) 
                 lastPile.GetCardComponent().Flip();
             else 
                 lastPile.GetCardComponent()._colEnabled = true;
         }
 
-        private void HandleAttachedCards(CardPile newPile, bool attachCard) {
+        private void HandleAttachedCards(PileComponent newPile, bool attachCard) {
             newPile.AddCard(_card, gameObject, attachCard);
             _currentPile.GetStack().RemoveCard(_card, gameObject);
             _currentPile = newPile;
@@ -268,7 +276,7 @@ namespace DVR.Components {
             }
         }
 
-        private void HandleSortingOrder(CardPile lastPile) {
+        private void HandleSortingOrder(PileComponent lastPile) {
             #region No Cards Attached
 
             lastPile.GetStack().DecreaseMaxSortingOrder();
@@ -299,6 +307,22 @@ namespace DVR.Components {
 
             parent._child = this;
             _parent = parent;
+        }
+
+        #endregion
+
+        #region Event Methods
+
+        private void CardMoved() {
+            PileComponent[] piles = _deck.GetPiles();
+            GameManager manager = GameManager.Instance;
+
+            foreach (PileComponent pile in piles) {
+                int maxSorting = pile.GetStack().GetMaxSortingOrder();
+
+                if (manager.GetMaxSortingOrder() < maxSorting)
+                    manager.SetMaxSortingOrder(maxSorting);
+            }
         }
 
         #endregion

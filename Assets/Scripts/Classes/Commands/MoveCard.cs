@@ -1,7 +1,8 @@
-using DVR.Interfaces;
+using DVR.Interfaces.Commands;
+using DVR.Classes.Cards;
 using UnityEngine;
 
-namespace DVR.Classes
+namespace DVR.Classes.Commands
 {
     public class MoveCard : ICommand {
         private readonly Card _cardToMove;

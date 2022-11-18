@@ -1,7 +1,7 @@
 using System.Text;
 using UnityEngine;
 
-namespace DVR.Classes
+namespace DVR.Classes.Miscellaneous
 {
     public class Timer {
         private float _timer;

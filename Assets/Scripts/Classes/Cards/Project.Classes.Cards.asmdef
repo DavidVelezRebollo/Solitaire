@@ -1,0 +1,16 @@
+{
+    "name": "Project.Classes.Cards",
+    "rootNamespace": "",
+    "references": [
+        "GUID:50f2be2a5ad956643ad553b3cdbb22f0"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

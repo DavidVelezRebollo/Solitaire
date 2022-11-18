@@ -1,9 +1,8 @@
 using System.Collections.Generic;
-using DVR.Interfaces;
 using UnityEngine;
 
-namespace DVR.Classes {
-    public class CardStack : ICardStack {
+namespace DVR.Classes.Cards {
+    public class CardStack {
         // Cards inside the stack
         private readonly List<Card> _cards = new List<Card>();
         // Game Object attached to the stack cards

@@ -1,8 +1,8 @@
-using DVR.Classes;
+using DVR.Classes.Miscellaneous;
 using TMPro;
 using UnityEngine;
 
-namespace DVR.Components
+namespace DVR.Components.Core
 {
     public class HUDManager : MonoBehaviour {
         public TextMeshProUGUI MovementsText;

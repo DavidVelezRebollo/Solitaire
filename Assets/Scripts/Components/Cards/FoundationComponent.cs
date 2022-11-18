@@ -1,10 +1,10 @@
-using DVR.Classes;
+using DVR.Classes.Cards;
 using DVR.Shared;
 using UnityEngine;
 
-namespace DVR.Components
+namespace DVR.Components.Cards
 {
-    public class Foundation : CardPile {
+    public class FoundationComponent : PileComponent {
         [Tooltip("Type of the cards inside foundation")]
         [SerializeField] private CardType FoundationType;
 

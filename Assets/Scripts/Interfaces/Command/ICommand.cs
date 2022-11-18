@@ -1,4 +1,4 @@
-namespace DVR.Interfaces
+namespace DVR.Interfaces.Commands
 {
     public interface ICommand {
         /// <summary>

@@ -1,9 +1,8 @@
-using DVR.Interfaces;
 using DVR.Shared;
 using UnityEngine;
 
-namespace DVR.Classes {
-    public class Card : ICard {
+namespace DVR.Classes.Cards {
+    public class Card {
         //Type of the card (Heart, Diamond, Spade or Club)
         private readonly CardType _type;
         // Color of the card (Red or black)

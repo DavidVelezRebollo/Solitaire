@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using DVR.Interfaces;
+using DVR.Interfaces.Commands;
 
-namespace DVR.Classes
+namespace DVR.Classes.Commands
 {
     public class CommandManager {
         private readonly List<ICommand> _commands = new List<ICommand>();

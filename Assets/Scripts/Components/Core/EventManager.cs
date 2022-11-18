@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace DVR.Components
+namespace DVR.Components.Core
 {
     public class EventManager : MonoBehaviour
     {

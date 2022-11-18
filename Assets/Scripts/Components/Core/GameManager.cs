@@ -1,7 +1,7 @@
-using DVR.Classes;
+using DVR.Classes.Commands;
 using UnityEngine;
 
-namespace DVR.Components {
+namespace DVR.Components.Core {
     public class GameManager : MonoBehaviour {
         #region Singleton
 
@@ -14,14 +14,7 @@ namespace DVR.Components {
         }
 
         #endregion
-
-        [Tooltip("Deck of the game")]
-        public Deck Deck;
-        [Tooltip("Card piles of the game")]
-        public CardPile[] Piles;
-        [Tooltip("Foundations of the game")]
-        public Foundation[] Foundations;
-
+        
         // Commands of the game
         public CommandManager Commands { get; private set; }
         // Max sorting order among the card piles
@@ -30,10 +23,7 @@ namespace DVR.Components {
         #region Unity Events
 
         private void Start() {
-            Deck.Initialize();
-
             Commands = new CommandManager();
-            EventManager.Instance.OnCardMoved += CardMoved;
         }
 
         #endregion
@@ -59,17 +49,12 @@ namespace DVR.Components {
             _maxSortingOrder++;
         }
 
-        #endregion
-
-        #region Event Methods
-
-        private void CardMoved() {
-            foreach (CardPile pile in Piles) {
-                int maxSorting = pile.GetStack().GetMaxSortingOrder();
-
-                if (_maxSortingOrder < maxSorting)
-                    _maxSortingOrder = maxSorting;
-            }
+        /// <summary>
+        /// Sets the maximum sorting order
+        /// </summary>
+        /// <param name="sortingOrder">The new maximum sorting order</param>
+        public void SetMaxSortingOrder(int sortingOrder) {
+            _maxSortingOrder = sortingOrder;
         }
 
         #endregion

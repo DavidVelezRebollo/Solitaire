@@ -1,0 +1,17 @@
+{
+    "name": "Project.Classes.Commands",
+    "rootNamespace": "",
+    "references": [
+        "GUID:3c8c2d6f346c47c4c896eaf910992f69",
+        "GUID:1d771fa84f83c564489ce8e3f28a44eb"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
