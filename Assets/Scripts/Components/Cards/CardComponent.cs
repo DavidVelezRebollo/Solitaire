@@ -34,7 +34,7 @@ namespace DVR.Components.Cards {
         // Determines if the collider is enabled
         private bool _colEnabled = true;
         // Speed at which the card moves
-        private const float _CARD_SPEED = 0.3f;
+        private const float _CARD_SPEED = 35f;
 
         #region Unity Events
 
@@ -62,7 +62,8 @@ namespace DVR.Components.Cards {
                 _canClick = false;
                 
                 if(_moving)
-                    transform.position = Vector3.MoveTowards(transform.position, _cardPosition, _CARD_SPEED);
+                    transform.position = Vector3.MoveTowards(
+                        transform.position, _cardPosition, _CARD_SPEED * Time.deltaTime);
                 
             }
             else _canClick = true;
@@ -270,7 +271,7 @@ namespace DVR.Components.Cards {
                 
             CardComponent attachedCard = _child;
             while (attachedCard != null) {
-                newPile.AddCard(attachedCard._card, attachedCard.gameObject, attachCard);
+                newPile.AddCard(attachedCard._card, attachedCard.gameObject, true);
                 attachedCard._currentPile.GetStack().RemoveCard(attachedCard._card, attachedCard.gameObject);
                 attachedCard._currentPile = newPile;
                     
@@ -318,6 +319,7 @@ namespace DVR.Components.Cards {
         private void CardMoved() {
             PileComponent[] piles = _deck.GetPiles();
             GameManager manager = GameManager.Instance;
+
             int maxSorting = 0;
 
             foreach (PileComponent pile in piles)
