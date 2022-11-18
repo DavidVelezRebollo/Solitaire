@@ -182,9 +182,6 @@ namespace DVR.Components {
             // HANDLE SORTING ORDER
             StolenCards.GetStack().IncreaseMaxSortingOrder();
             card.GetCard().SetSortingOrder(StolenCards.GetStack().GetMaxSortingOrder());
-
-            // DEBUG - TO DELETE
-            Debug.Log(StolenCards.GetStack().ToString());
         }
         
         #endregion

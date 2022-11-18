@@ -1,3 +1,4 @@
+using DVR.Classes;
 using UnityEngine;
 
 namespace DVR.Components {
@@ -21,6 +22,8 @@ namespace DVR.Components {
         [Tooltip("Foundations of the game")]
         public Foundation[] Foundations;
 
+        // Commands of the game
+        public CommandManager Commands { get; private set; }
         // Max sorting order among the card piles
         private int _maxSortingOrder;
 
@@ -29,6 +32,7 @@ namespace DVR.Components {
         private void Start() {
             Deck.Initialize();
 
+            Commands = new CommandManager();
             EventManager.Instance.OnCardMoved += CardMoved;
         }
 

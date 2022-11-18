@@ -1,5 +1,6 @@
 using UnityEngine;
 using DVR.Classes;
+using DVR.Interfaces;
 
 namespace DVR.Components {
     public class CardComponent : MonoBehaviour {
@@ -16,6 +17,8 @@ namespace DVR.Components {
         private Card _card;
         // Pile where the card is located
         private CardPile _currentPile;
+        // Previous pile of the card
+        private CardPile _previousPile;
         // Parent card
         private CardComponent _parent;
         // Child card
@@ -70,8 +73,7 @@ namespace DVR.Components {
             if (!Input.GetMouseButtonDown(1) || _moving || _child != null) return;
 
             Foundation[] foundations = GameManager.Instance.Foundations;
-            CardPile lastPile = _currentPile;
-            
+
             int i = 0;
             bool found = false;
 
@@ -140,22 +142,6 @@ namespace DVR.Components {
             return _card;
         }
 
-        /// <summary>
-        /// Gets the card which this card is attached to, if it exists
-        /// </summary>
-        /// <returns>The parent card. Null if it don't have a parent</returns>
-        public CardComponent GetParent() {
-            return _parent;
-        } 
-
-        /// <summary>
-        /// Gets the child attached to the card, if it exists
-        /// </summary>
-        /// <returns>The card attached to this card. Null if it doesn't exist</returns>
-        public CardComponent GetChild() {
-            return _child;
-        }
-
         #endregion
 
         #region Setters
@@ -200,7 +186,7 @@ namespace DVR.Components {
         /// <param name="newPile">The pile to be replaced</param>
         /// <param name="attachCard">Checks if we want to attach the card transform at the new pile</param>
         private void ChangePile(CardPile newPile, bool attachCard) {
-            CardPile lastPile = _currentPile;
+            _previousPile = _currentPile;
             CardComponent parentCard = null;
 
             if (newPile.GetStack().HasCards()) parentCard = newPile.GetCardComponent();
@@ -219,13 +205,13 @@ namespace DVR.Components {
             if(parentCard != null) AttachCard(parentCard);
 
             // FLIP THE CARD, IF THERE IS A CARD, OF THE LAST PILE
-            HandleLastCard(lastPile);
+            HandleLastCard(_previousPile);
             
             // EVENT INVOCATION
             EventManager.Instance.CardMoved();
 
             // INCREASE AND DECREASE OF THE SORTING ORDER
-            HandleSortingOrder(lastPile);
+            HandleSortingOrder(_previousPile);
         }
 
         /// <summary>
@@ -283,11 +269,17 @@ namespace DVR.Components {
         }
 
         private void HandleSortingOrder(CardPile lastPile) {
+            #region No Cards Attached
+
             lastPile.GetStack().DecreaseMaxSortingOrder();
             _currentPile.GetStack().IncreaseMaxSortingOrder();
             _card.SetSortingOrder(_currentPile.GetStack().GetMaxSortingOrder());
 
+            #endregion
+
             if (_child == null) return;
+
+            #region Cards Attached
 
             CardComponent attachedCard = _child;
             while (attachedCard != null) {
@@ -297,6 +289,8 @@ namespace DVR.Components {
                 
                 attachedCard = attachedCard._child;
             }
+
+            #endregion
         }
         
         private void AttachCard(CardComponent parent) {
