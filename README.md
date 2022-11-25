@@ -1,2 +1,2 @@
-# Soltaire
+# Solitaire
  
