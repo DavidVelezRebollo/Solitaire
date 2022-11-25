@@ -4,7 +4,24 @@ using UnityEngine;
 namespace DVR.Components.Cards
 {
     public class PileComponent : MonoBehaviour {
+        private BoxCollider2D _collider;
         protected readonly CardStack CardStack  = new CardStack();
+
+        #region Unity Events
+
+        protected void Start() {
+            if (CompareTag("StolenCards")) return;
+            
+            _collider = GetComponent<BoxCollider2D>();
+        }
+
+        protected void Update() {
+            if (!_collider) return;
+            
+            _collider.enabled = !CardStack.HasCards();
+        }
+
+        #endregion
         
         #region Getters
 

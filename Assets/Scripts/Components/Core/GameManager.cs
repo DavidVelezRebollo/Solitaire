@@ -17,6 +17,8 @@ namespace DVR.Components.Core {
         
         // Commands of the game
         public CommandManager Commands { get; private set; }
+        // Main Camera of the game
+        [SerializeField] private Camera MainCamera;
         // Max sorting order among the card piles
         private int _maxSortingOrder;
 
@@ -36,6 +38,12 @@ namespace DVR.Components.Core {
         /// <returns>The maximum sorting order on the table</returns>
         public int GetMaxSortingOrder() {
             return _maxSortingOrder;
+        }
+
+        public Vector3 GetMousePosition() {
+            Vector3 temp = MainCamera.ScreenToWorldPoint(Input.mousePosition);
+
+            return new Vector3(temp.x, temp.y);
         }
 
         #endregion

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using DVR.Classes.Cards;
 using DVR.Components.Core;
@@ -27,14 +28,20 @@ namespace DVR.Components.Cards {
         private CardComponent _child;
         // Position of the card
         private Vector3 _cardPosition;
+        // Time clicking the card
+        private float _clickDelta;
         // Determines if the card is moving
         private bool _moving;
+        // Determines if the card is being dragged
+        private bool _dragged;
         // Determines if the card can be clicked
         private bool _canClick;
         // Determines if the collider is enabled
         private bool _colEnabled = true;
         // Speed at which the card moves
         private const float _CARD_SPEED = 35f;
+        // Time which have to pass to drag the card
+        private const float _CLICKING_TIME = 0.1f;
 
         #region Unity Events
 
@@ -54,6 +61,10 @@ namespace DVR.Components.Cards {
 
         private void Update() {
             _spriteRenderer.sortingOrder = !_moving ? _card.GetSortingOrder() : GameManager.Instance.GetMaxSortingOrder() + 1;
+            if (_dragged) {
+                _collider.enabled = false;
+                return;
+            }
 
             if (transform.position == _cardPosition) {
                 _moving = false;
@@ -79,68 +90,29 @@ namespace DVR.Components.Cards {
             
             _collider.enabled = _canClick && _colEnabled;
         }
-        
-        private void OnMouseOver() {
-            if (!Input.GetMouseButtonDown(1) || _moving || _child != null) return;
-
-            FoundationComponent[] foundations = _deck.GetFoundations();
-
-            int i = 0;
-            bool found = false;
-
-            while (i < foundations.Length && !found) {
-                if (foundations[i].GetFoundationType() == _card.GetCardType() && foundations[i].CanPlace(_card)) {
-                    _cardPosition = foundations[i].transform.position;
-
-                    if (foundations[i].GetStack().HasCards()) {
-                        foundations[i].GetCardComponent().DisableCollider();
-                    }
-                    
-                    ChangePile(foundations[i], false);
-
-                    _moving = true;
-                    found = true;
-                }
-                
-                i++;
-            }
-        }
 
         private void OnMouseDown() {
-            if (_moving) return;
-
-            PileComponent[] piles = _deck.GetPiles();
-
-            int i = 0;
-            bool found = false;
-
-            while (i < piles.Length && !found) {
-                if(piles[i].GetStack().HasCards()) {
-                    if (_card.CanPlace(piles[i].GetStack().GetCard())) {
-                        _cardPosition = piles[i].GetStack().GetCardGameObject().transform.position - 
-                                        new Vector3(0, 0.7f, 0);
-
-                        ChangePile(piles[i], true);
-
-                        _moving = true;
-                        found = true;
-                    }
-                }
-                else {
-                    if (_card.GetCardValue() == 13) {
-                        _cardPosition = piles[i].transform.position;
-
-                        ChangePile(piles[i], false);
-
-                        _moving = true;
-                        found = true;
-                    }
-                }
-
-                i++;
-            }
+            _clickDelta = Time.time;
         }
-        
+
+        private void OnMouseDrag() {
+            if (!(Time.time - _clickDelta > _CLICKING_TIME)) return;
+            
+            _dragged = true;
+            _moving = true;
+            transform.position = GameManager.Instance.GetMousePosition();
+        }
+
+        private void OnMouseUp() {
+            if (Time.time - _clickDelta <= _CLICKING_TIME) {
+                OnClick();
+                return;
+            }
+            
+            OnDrag();
+            _dragged = false;
+        }
+
         #endregion
 
         #region Getters
@@ -190,6 +162,110 @@ namespace DVR.Components.Cards {
         #endregion
 
         #region Methods
+        
+        /// <summary>
+        /// Handles when a card is clicked without being dragged.
+        /// </summary>
+        private void OnClick() {
+            if (_moving) return;
+            
+            int i = 0;
+            bool found = false;
+
+            PileComponent[] piles = _deck.GetPiles();
+            FoundationComponent[] foundations = _deck.GetFoundations();
+            
+            // LOOKS IF THE CARD CAN BE PUT INSIDE THE FOUNDATIONS
+            while (i < foundations.Length && !found) {
+                if (CheckValidFoundation(foundations[i])) {
+                    _moving = true;
+                    found = true;
+                }
+                
+                i++;
+            }
+
+            // If it was put, return
+            if (found) return;
+
+            i = 0;
+            
+            // LOOK IF THE CARD CAN BE PUT INSIDE THE PILES
+            while (i < piles.Length && !found) {
+                if(piles[i].GetStack().HasCards()) {
+                    if (_card.CanPlace(piles[i].GetStack().GetCard())) {
+                        _cardPosition = piles[i].GetStack().GetCardGameObject().transform.position - 
+                                        new Vector3(0, 0.7f, 0);
+
+                        ChangePile(piles[i], true);
+
+                        _moving = true;
+                        found = true;
+                    }
+                }
+                else {
+                    if (_card.GetCardValue() == 13) {
+                        _cardPosition = piles[i].transform.position;
+
+                        ChangePile(piles[i], false);
+
+                        _moving = true;
+                        found = true;
+                    }
+                }
+
+                i++;
+            }
+        }
+
+        /// <summary>
+        /// Handles when the card is dragged by the user
+        /// </summary>
+        private void OnDrag() {
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, -Vector2.up);
+
+            if (!hit) return;
+
+            #region Card Hit
+
+            if(hit.collider.CompareTag("Card")) {
+                CardComponent card = hit.collider.GetComponent<CardComponent>();
+                
+                if (_card.CanPlace(card._card)) {
+                    _cardPosition = card._currentPile.GetCardComponent().transform.position - new Vector3(0, 0.7f, 0);
+                    ChangePile(card._currentPile, true);
+                    
+                    return;
+                }
+            }
+            
+            #endregion
+
+            #region Pile Hit
+
+            if (hit.collider.CompareTag("Pile")) {
+                PileComponent pile = hit.collider.GetComponent<PileComponent>();
+                
+                if (pile.GetStack().HasCards() || _card.GetCardValue() != 13) return;
+
+                _cardPosition = pile.transform.position; 
+                ChangePile(pile, false);
+
+                return;
+            }
+            
+            #endregion
+
+            #region Foundation Hit
+
+            if (!hit.collider.CompareTag("Foundation")) return;
+            FoundationComponent foundation = hit.collider.GetComponent<FoundationComponent>();
+
+            CheckValidFoundation(foundation);
+            
+            #endregion
+            
+        }
 
         /// <summary>
         /// Change between the pile of the card and a pile objective
@@ -310,6 +386,24 @@ namespace DVR.Components.Cards {
 
             parent._child = this;
             _parent = parent;
+        }
+        
+        private bool CheckValidFoundation(FoundationComponent foundation) {
+            bool valid = false;
+            
+            if (foundation.GetFoundationType() == _card.GetCardType() && foundation.CanPlace(_card) && !_child) {
+                _cardPosition = foundation.transform.position;
+
+                if (foundation.GetStack().HasCards()) {
+                    foundation.GetCardComponent().DisableCollider();
+                }
+                    
+                ChangePile(foundation, false);
+
+                valid = true;
+            }
+
+            return valid;
         }
 
         #endregion
