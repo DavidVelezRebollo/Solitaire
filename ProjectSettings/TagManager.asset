@@ -8,7 +8,7 @@ TagManager:
   - Foundation
   - Deck
   - Card
-  - StolenPile
+  - StolenCards
   layers:
   - Default
   - TransparentFX
