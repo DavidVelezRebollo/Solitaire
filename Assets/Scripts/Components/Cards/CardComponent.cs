@@ -272,6 +272,14 @@ namespace DVR.Components.Cards {
                     
                     return;
                 }
+
+                if (card._currentPile.CompareTag("Foundation")) {
+                    FoundationComponent cardFoundation = (FoundationComponent) card._currentPile;
+
+                    CheckValidFoundation(cardFoundation);
+
+                    return;
+                }
             }
             
             #endregion
