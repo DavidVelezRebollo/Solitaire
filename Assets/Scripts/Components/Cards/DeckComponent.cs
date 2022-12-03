@@ -3,6 +3,7 @@ using DVR.Components.Core;
 using DVR.Shared;
 
 using System.Collections;
+using DG.Tweening;
 using Random = UnityEngine.Random;
 
 using UnityEngine;
@@ -110,19 +111,20 @@ namespace DVR.Components.Cards {
                     // VARIABLES
                     CardComponent instantiateCard = CardPrefab.GetComponent<CardComponent>();   
                     Card lastCard = _deckCards.GetCard();
-                    Vector3 position = Piles[i].transform.position + new Vector3(0, yOffset, 0);
+                    Vector3 finalPosition = Piles[i].transform.position + new Vector3(0, yOffset, 0);
                     Transform parent = Piles[i].transform;
 
                     // CREATION OF THE CARD
                     lastCard.SetSortingOrder(j);
                     instantiateCard.SetCard(lastCard);
-                    GameObject cardGo = instantiateCard.CreateCard(parent, position);
+                    GameObject cardGo = instantiateCard.CreateCard(parent, transform.position);
+                    cardGo.transform.DOMove(finalPosition, 0.1f);
 
                     // CARD INITIALIZATION
                     CardComponent card = cardGo.GetComponent<CardComponent>();
                     card.SetCard(lastCard);
                     card.SetPile(Piles[i]);
-                    card.SetPosition(position);
+                    card.SetPosition(finalPosition);
 
                     // ADDING THE CARD
                     Piles[i].AddCard(card.GetCard(), cardGo, false);
@@ -137,7 +139,7 @@ namespace DVR.Components.Cards {
                         GameManager.Instance.IncreaseMaxSortingOrder();
 
                     yOffset -= 0.7f;
-                    yield return new WaitForSeconds(0.05f);
+                    yield return new WaitForSeconds(0.1f);
                 }
                 
                 cardsNumber++;
@@ -168,7 +170,10 @@ namespace DVR.Components.Cards {
 
             // CREATING THE CARD
             instantiateCard.SetCard(_deckCards.GetCard());
-            GameObject cardGo = instantiateCard.CreateCard(parent, parent.position);
+            GameObject cardGo = instantiateCard.CreateCard(parent, transform.position);
+            cardGo.transform.rotation = Quaternion.Euler(new Vector3(0, -180, 0));
+            cardGo.transform.DOMove(parent.position, 0.1f);
+            cardGo.transform.DORotate(new Vector3(0, 0, 0), 0.1f);
             
             // INITIALIZING THE CARD
             CardComponent card = cardGo.GetComponent<CardComponent>();

@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using UnityEngine;
 using DVR.Classes.Cards;
 using DVR.Components.Core;
@@ -65,6 +66,12 @@ namespace DVR.Components.Cards {
                 _collider.enabled = false;
                 return;
             }
+            
+            if (_parent)
+                if (_parent.IsBeingDragged()) {
+                    _collider.enabled = false;
+                    return;
+                }
 
             if (transform.position == _cardPosition) {
                 _moving = false;
@@ -92,6 +99,8 @@ namespace DVR.Components.Cards {
         }
 
         private void OnMouseDown() {
+            transform.DOScale(new Vector3(1.3f, 1.3f, 1.3f), 0.2f);
+            
             _clickDelta = Time.time;
         }
 
@@ -101,9 +110,21 @@ namespace DVR.Components.Cards {
             _dragged = true;
             _moving = true;
             transform.position = GameManager.Instance.GetMousePosition();
+
+            if (!_child) return;
+
+            CardComponent attachedCard = _child;
+            int i = 1;
+            while (attachedCard != null) {
+                attachedCard._card.SetSortingOrder(_spriteRenderer.sortingOrder + i);
+                attachedCard = attachedCard._child;
+                i++;
+            }
         }
 
         private void OnMouseUp() {
+            transform.DOScale(Vector3.one, 0.2f);
+            
             if (Time.time - _clickDelta <= _CLICKING_TIME) {
                 OnClick();
                 return;
@@ -111,6 +132,16 @@ namespace DVR.Components.Cards {
             
             OnDrag();
             _dragged = false;
+            
+            if (!_child) return;
+
+            CardComponent attachedCard = _child;
+            int i = 0;
+            while (attachedCard != null) {
+                attachedCard._card.SetSortingOrder(attachedCard._currentPile.GetStack().GetMaxSortingOrder() + i);
+                attachedCard = attachedCard._child;
+                i++;
+            }
         }
 
         #endregion
@@ -123,6 +154,10 @@ namespace DVR.Components.Cards {
         /// <returns>The card contained inside the component</returns>
         public Card GetCard() {
             return _card;
+        }
+
+        public bool IsBeingDragged() {
+            return _dragged;
         }
 
         #endregion
@@ -362,10 +397,10 @@ namespace DVR.Components.Cards {
             _currentPile.GetStack().IncreaseMaxSortingOrder();
             _card.SetSortingOrder(_currentPile.GetStack().GetMaxSortingOrder());
 
+            if (!_child) return;
+            
             #endregion
-
-            if (_child == null) return;
-
+            
             #region Cards Attached
 
             CardComponent attachedCard = _child;
